@@ -59,7 +59,7 @@ function Header({user,role}) {
                         </Button>   
                     </SheetTrigger>
                     <SheetContent side="left">
-                          <Link className="mr-6 hidden lg:flex" href={"#"}>
+                          <Link className="mr-6 hidden lg:flex" href={"/"}>
                           <SheetTitle>Job</SheetTitle>
                           </Link>
                           <div className="grid gap-2 py-6">

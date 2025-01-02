@@ -1,10 +1,11 @@
 "use client"
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogTitle } from "../ui/dialog";
 import { getCandidateDetailsByIdAction, updateJobApplication } from "@/actions";
 import { createClient } from "@supabase/supabase-js";
+import { LogIn } from "lucide-react";
 
 const superbaseClient = createClient(
   "https://yschbhvplekqecqsuxrk.supabase.co",
@@ -57,6 +58,18 @@ function CandidateList({
       console.error("No public URL found!");
     }
   };
+  console.log(currentCandidateDetails?.userId)
+
+    const selectbtn=()=>{
+        jobApplication.find((item)=>(
+         console.log(item.candidateUserId)
+         
+      )
+  )
+  }
+ 
+    
+
 
   const handleUpdateJobStatus=async(getCrruentStatus)=>{
        let copyJobApplicats=[...jobApplication];
@@ -70,7 +83,7 @@ function CandidateList({
         console.log(jobApplicatsUpdate,"lll");
         await updateJobApplication(jobApplicatsUpdate,"/jobs")
   }
-  
+ 
  
    return(
     <>
@@ -118,8 +131,12 @@ function CandidateList({
         </div>
         <div>
             <Button onClick={handlePreviewResume} className="m-2 items-center justify-center px-5">Resume</Button>
-            <Button onClick={()=>handleUpdateJobStatus("selected")} className="m-2 items-center justify-center px-5">Select</Button>
-            <Button onClick={()=>handleUpdateJobStatus("rejected")} className="m-2 items-center justify-center px-5">Reject</Button>
+            <Button onClick={()=>handleUpdateJobStatus("Selected")} className="m-2 items-center justify-center px-5" disabled={selectbtn()}>
+              {
+              selectbtn()?"Selected":"Select"
+              }
+            </Button>
+            <Button onClick={()=>handleUpdateJobStatus("rejected")} className="m-2 items-center justify-center px-5" disabled={selectbtn()}>Reject</Button>
           </div>
          
        </DialogContent>

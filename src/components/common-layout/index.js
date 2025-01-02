@@ -2,7 +2,7 @@ import { currentUser } from "@clerk/nextjs/server"
 import Header from "../header"
 import { fetchProfileAction } from "@/actions";
 
-export const CommonLayout=async({children})=>{
+export async function CommonLayout({children}){
 
       const user=await currentUser();
       const profileInfo=await fetchProfileAction(user?.id)
