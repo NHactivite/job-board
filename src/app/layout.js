@@ -3,7 +3,7 @@ import "./globals.css";
 import { Suspense } from "react";
 import Loading from "./loading";
 import { CommonLayout } from "@/components/common-layout";
-import { ClerkProvider } from "@clerk/nextjs";
+import { ClerkLoaded, ClerkLoading, ClerkProvider } from "@clerk/nextjs";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,9 +25,16 @@ export default function RootLayout({ children }) {
     <ClerkProvider>
       <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <ClerkLoading>
+            <div className=" flex items-center justify-center h-screen text-7xl font-bold">
+               Loading....
+            </div>
+          </ClerkLoading>
+        <ClerkLoaded>
         <Suspense fallback={<Loading/>}>
               <CommonLayout children={children}/>
         </Suspense>
+        </ClerkLoaded>
       </body>
      </html>
     </ClerkProvider>

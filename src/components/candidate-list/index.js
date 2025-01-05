@@ -1,11 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react";
-import { Button } from "../ui/button";
-import { Dialog, DialogContent, DialogFooter, DialogTitle } from "../ui/dialog";
 import { getCandidateDetailsByIdAction, updateJobApplication } from "@/actions";
 import { createClient } from "@supabase/supabase-js";
-import { LogIn } from "lucide-react";
+import { Button } from "../ui/button";
+import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
 
 const superbaseClient = createClient(
   "https://yschbhvplekqecqsuxrk.supabase.co",
@@ -58,18 +56,7 @@ function CandidateList({
       console.error("No public URL found!");
     }
   };
-  console.log(currentCandidateDetails?.userId)
-
-    const selectbtn=()=>{
-        jobApplication.find((item)=>(
-         console.log(item.candidateUserId)
-         
-      )
-  )
-  }
- 
-    
-
+  console.log("current candaidate id",currentCandidateDetails?.userId)
 
   const handleUpdateJobStatus=async(getCrruentStatus)=>{
        let copyJobApplicats=[...jobApplication];
@@ -83,7 +70,15 @@ function CandidateList({
         console.log(jobApplicatsUpdate,"lll");
         await updateJobApplication(jobApplicatsUpdate,"/jobs")
   }
- 
+  
+  const isApplicationExists = jobApplication.find(
+    (item) => item.candidateUserId === currentCandidateDetails?.userId
+  );
+
+const isSelected = isApplicationExists?.status.includes("Selected");
+
+const isRejected = isApplicationExists?.status.includes("Rejected");
+
  
    return(
     <>
@@ -131,12 +126,15 @@ function CandidateList({
         </div>
         <div>
             <Button onClick={handlePreviewResume} className="m-2 items-center justify-center px-5">Resume</Button>
-            <Button onClick={()=>handleUpdateJobStatus("Selected")} className="m-2 items-center justify-center px-5" disabled={selectbtn()}>
-              {
-              selectbtn()?"Selected":"Select"
-              }
+           { 
+            isSelected?<span className="text-green-400 font-bold mx-5">Selected</span>:<Button onClick={()=>handleUpdateJobStatus("Selected")} className="disabled:opacity-55 m-2 items-center justify-center  px-5 " disabled={isRejected}>
+              Select
+            </Button>}
+            {
+             isRejected?<span className="text-red-500 font-bold mx-5">Rejected</span>: <Button onClick={()=>handleUpdateJobStatus("Rejected")} className="disabled:opacity-55 m-2 items-center justify-center  px-5" disabled={isSelected}>
+              Reject
             </Button>
-            <Button onClick={()=>handleUpdateJobStatus("rejected")} className="m-2 items-center justify-center px-5" disabled={selectbtn()}>Reject</Button>
+            }
           </div>
          
        </DialogContent>

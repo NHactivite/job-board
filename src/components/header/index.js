@@ -59,14 +59,16 @@ function Header({user,role}) {
                         </Button>   
                     </SheetTrigger>
                     <SheetContent side="left">
-                          <Link className="mr-6 hidden lg:flex" href={"/"}>
+                          <Link className="mr-6 hidden lg:flex" href={"#"}>
                           <SheetTitle>Job</SheetTitle>
                           </Link>
                           <div className="grid gap-2 py-6">
                                 {
                                     menuItems.map((item,idx)=>(
                                         item.show?
-                                        <Link href={item.path} className="flex w-full items-center py-2 text-lg font-semibold" key={idx}>
+                                        <Link key={idx} href={item.path} 
+                                         onClick={()=>sessionStorage.removeItem("filterParams")}
+                                        className="flex w-full items-center py-2 text-lg font-semibold" >
                                             {item.label}
                                         </Link>
                                         :null
@@ -81,7 +83,9 @@ function Header({user,role}) {
                     {
                         menuItems.map((item,idx)=>(
                             item.show?
-                            <Link key={idx} href={item.path} className="group inline-flex h-9 w-max items-center rounded-md bg-white px-4 py-2 text-sm font-medium">{item.label}</Link>
+                            <Link key={idx}
+                            onClick={()=>sessionStorage.removeItem("filterParams")}
+                            href={item.path} className="group inline-flex h-9 w-max items-center rounded-md bg-white px-4 py-2 text-sm font-medium">{item.label}</Link>
                             :null
                         ))
                     }

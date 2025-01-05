@@ -1,3 +1,4 @@
+import qs from "query-string"
 
  export const recruiterOnboardFRomControl=[
     {
@@ -22,7 +23,7 @@
  export const candidateOnboardFRomControl=[
     {
         label:"Resume",
-        name:"redume",
+        name:"resume",
         componentType:"file"
     },
     {
@@ -191,3 +192,44 @@
        skills:""
     }
  
+    
+    export const filterMenuData=[
+        {
+            id:"companyName",
+            label:"Company Name"
+        },
+        {
+            id:"title",
+            label:"Title"
+        },
+        {
+            id:"type",
+            label:"Type"
+        },
+        {
+            id:"location",
+            label:"Location"
+        }
+    ]
+
+
+export function formUrlQuery({params,dataToAdd}){
+    let currentURL=qs.parse(params);
+
+    if(Object.keys(dataToAdd).length>0){
+        Object.keys(dataToAdd).map(key=>{
+            if(dataToAdd[key].length===0){
+                delete currentURL[key]
+            }else{
+                currentURL[key]=dataToAdd[key].join(",")
+            }
+        })
+    }
+
+    return qs.stringifyUrl({
+        url:window.location.pathname,
+        query:currentURL,
+    },{
+        skipNull:true
+    })
+}
