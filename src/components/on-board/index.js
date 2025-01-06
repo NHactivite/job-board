@@ -94,10 +94,9 @@ function OnBoard() {
     }
    
   }
-
   
 
-  const handleRecuiterFromValid = () => {
+  const handleRecuiterFromValid =() => {
     return Object.keys(recruiterFromData).every((key) => {
       const value = recruiterFromData[key];
 

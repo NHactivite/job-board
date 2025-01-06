@@ -41,8 +41,7 @@ export default function CommonFrom({
         break;
 
       case "file":
-        console.log(getCurrentControl, "coom");
-
+       
         content = (
           <>
             <Label
@@ -76,7 +75,7 @@ export default function CommonFrom({
             
               </div>
             )}
-            {console.log(formData[getCurrentControl.name], "lpp")}
+           
           </>
         );
 
