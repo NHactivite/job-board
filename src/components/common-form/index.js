@@ -55,7 +55,9 @@ export default function CommonFrom({
                   id={getCurrentControl.name}
                   type="file"
                 />
-                <Button type="button" onClick={uploadFile}>
+                <Button 
+                type="button" 
+                onClick={uploadFile}>
                   {fileStatus ? "Remove" : "Upload"}
                 </Button>
               </div>
@@ -66,6 +68,7 @@ export default function CommonFrom({
                   {formData[getCurrentControl.name].split("/").pop().replace(/_[^/]+$/, '')}
                 </span>
               <Button
+              type="button"
               onClick={() => window.open(formData[getCurrentControl.name], "_blank")}
               className="text-white mt-3 mx-3"
               disabled={formData[getCurrentControl.name]===""}

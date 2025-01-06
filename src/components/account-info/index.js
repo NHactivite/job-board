@@ -16,19 +16,20 @@ function AccountInfo({profileInfo}){
     const [recruiterFormData,setRecruiterFromData]=useState(initialRecruiterFromData);
     const [view,setView]=useState(null)
     const [file, setFile] = useState(null);
-   
-    useEffect(()=>{
+    
+    // useEffect(()=>{
+    //      console.log("weeee chnge that");
          
-      if(profileInfo?.role==="recruiter") setRecruiterFromData(profileInfo.recruiterInfo)
-      if(profileInfo?.role==="candidate")  {
-        const { data } = superbaseClient.storage.from("job-board-public").getPublicUrl(profileInfo.candidateInfo.resume)
-           setView(data)
-        setCandidateFromData({
-            ...profileInfo.candidateInfo,
-            resume:data.publicUrl
-        })
-    }
-    },[profileInfo]);
+    //   if(profileInfo?.role==="recruiter") setRecruiterFromData(profileInfo.recruiterInfo)
+    //   if(profileInfo?.role==="candidate")  {
+    //     const { data } = superbaseClient.storage.from("job-board-public").getPublicUrl(profileInfo.candidateInfo.resume)
+    //        setView(data)
+    //     setCandidateFromData({
+    //         ...profileInfo.candidateInfo,
+    //         resume:data.publicUrl
+    //     })
+    // }
+    // },[profileInfo]);
 
     const handleFileChange = (event) => {
         event.preventDefault();
@@ -46,21 +47,23 @@ function AccountInfo({profileInfo}){
               upsert:false
             }
           );
+          console.log(data,"pp");
           
-          if(data){
+          if(data){ 
+            console.log("kii");
+            
              setCandidateFromData({
               ...profileInfo.candidateInfo,
               resume:data.path
              })
-            
+             console.log(candidateFormData,"ll");
+             
               }
            
-          
       };
     const uploadFile=async(e)=>{
-  
         e.preventDefault();
-    //    if (file && !fileStatus) handleUploadPdfToSuperbase(); 
+    
        const sanitizedFileName = (profileInfo.candidateInfo.resume).split("/").pop();
          const { data } = await superbaseClient
          .storage
@@ -71,7 +74,7 @@ function AccountInfo({profileInfo}){
           if(data[0]?.name==sanitizedFileName){
             handleUploadPdfToSuperbase(); 
        }
-      
+       
      }
   
      
