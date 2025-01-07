@@ -129,5 +129,5 @@ export async function updateProfileAction(data,pathToRevalidate){
   },{
     candidateInfo,isPremiumUser,role,userId,email
   },{new:true});
-  revalidatePath(pathToRevalidate)
+   revalidatePath(pathToRevalidate)
 }

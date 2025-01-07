@@ -112,7 +112,10 @@ export default function CommonFrom({
   return (
     <form action={action}>
       {formControls.map((control, idx) => (
-        <div key={idx}>{renderInputByCommponentType(control)}</div>
+        
+        <div key={idx}>
+          
+          {renderInputByCommponentType(control)}</div>
       ))}
       <div className="mt-6 w-full">
         <Button

@@ -5,11 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 
 function CandidateActivity({jobList,jobApplicants}){
-    console.log(jobList,"list");
-    console.log(jobApplicants,"applicants");
     const uniqueStatusArray= [...new Set(jobApplicants.map(jobApplicantItem=>jobApplicantItem.status).flat(1))]
-    console.log(uniqueStatusArray);
-    
     return(
         <div className="mx-auto max-w-7xl">
               <Tabs defaultValue="Applied" className="w-full">

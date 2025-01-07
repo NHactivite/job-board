@@ -14,22 +14,32 @@ function AccountInfo({profileInfo}){
     
     const [candidateFormData,setCandidateFromData]=useState(initialCandidateFromData);
     const [recruiterFormData,setRecruiterFromData]=useState(initialRecruiterFromData);
-    const [view,setView]=useState(null)
+    const [view,setView]=useState(false)
+    const [hasViewChanged, setHasViewChanged] = useState(false);
     const [file, setFile] = useState(null);
     
-    // useEffect(()=>{
-    //      console.log("weeee chnge that");
-         
-    //   if(profileInfo?.role==="recruiter") setRecruiterFromData(profileInfo.recruiterInfo)
-    //   if(profileInfo?.role==="candidate")  {
-    //     const { data } = superbaseClient.storage.from("job-board-public").getPublicUrl(profileInfo.candidateInfo.resume)
-    //        setView(data)
-    //     setCandidateFromData({
-    //         ...profileInfo.candidateInfo,
-    //         resume:data.publicUrl
-    //     })
-    // }
-    // },[profileInfo]);
+    useEffect(()=>{
+      window.scrollTo(0, 0);
+        if(profileInfo?.role==="recruiter") setRecruiterFromData(profileInfo.recruiterInfo)
+          if(profileInfo?.role==="candidate")  {
+            const { data } = superbaseClient.storage.from("job-board-public").getPublicUrl(profileInfo.candidateInfo.resume)
+            setCandidateFromData({
+                ...profileInfo.candidateInfo,
+                resume:data.publicUrl
+            })
+          }
+
+    },[profileInfo]);
+
+useEffect(() => {
+  if (hasViewChanged) {
+    handleUpdateResume()
+    setHasViewChanged(false)
+    setView(false)
+  } else{
+    setHasViewChanged(true)
+  }
+}, [view]); 
 
     const handleFileChange = (event) => {
         event.preventDefault();
@@ -47,19 +57,14 @@ function AccountInfo({profileInfo}){
               upsert:false
             }
           );
-          console.log(data,"pp");
           
           if(data){ 
-            console.log("kii");
-            
-             setCandidateFromData({
-              ...profileInfo.candidateInfo,
-              resume:data.path
-             })
-             console.log(candidateFormData,"ll");
-             
-              }
-           
+            setCandidateFromData((prevState) => ({
+              ...prevState,
+              resume: data.path,
+            }));
+            setView(true)
+              }   
       };
     const uploadFile=async(e)=>{
         e.preventDefault();
@@ -78,9 +83,29 @@ function AccountInfo({profileInfo}){
      }
   
      
+    const handleUpdateResume=async()=>{
+       
+        await updateProfileAction(profileInfo?.role==="candidate"?{
+            _id:profileInfo?._id,
+            candidateInfo:{
+              ...profileInfo?.candidateInfo,
+              resume:candidateFormData.resume
+            },
+            isPremiumUser:profileInfo?.isPremiumUser,
+            role:profileInfo?.role,
+            userId:profileInfo.userId,
+            email:profileInfo?.email
+        }:{
+            _id:profileInfo?._id,
+            candidateInfo:profileInfo?.candidateInfo,
+            isPremiumUser:profileInfo?.isPremiumUser,
+            role:profileInfo?.role,
+            userId:profileInfo.userId,
+            email:profileInfo?.email
+        },"/account")
+       
+    }
     const handleUpdateAccount=async()=>{
-        console.log(candidateFormData,"updated data");
-        
         await updateProfileAction(profileInfo?.role==="candidate"?{
             _id:profileInfo?._id,
             candidateInfo:candidateFormData,
@@ -96,6 +121,7 @@ function AccountInfo({profileInfo}){
             userId:profileInfo.userId,
             email:profileInfo?.email
         },"/account")
+       
     }
   
     return(
