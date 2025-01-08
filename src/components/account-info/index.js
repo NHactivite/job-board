@@ -85,7 +85,7 @@ useEffect(() => {
      
     const handleUpdateResume=async()=>{
        
-        await updateProfileAction(profileInfo?.role==="candidate"?{
+        await updateProfileAction({
             _id:profileInfo?._id,
             candidateInfo:{
               ...profileInfo?.candidateInfo,
@@ -95,14 +95,8 @@ useEffect(() => {
             role:profileInfo?.role,
             userId:profileInfo.userId,
             email:profileInfo?.email
-        }:{
-            _id:profileInfo?._id,
-            candidateInfo:profileInfo?.candidateInfo,
-            isPremiumUser:profileInfo?.isPremiumUser,
-            role:profileInfo?.role,
-            userId:profileInfo.userId,
-            email:profileInfo?.email
-        },"/account")
+          }
+        ,"/account")
        
     }
     const handleUpdateAccount=async()=>{
@@ -115,7 +109,7 @@ useEffect(() => {
             email:profileInfo?.email
         }:{
             _id:profileInfo?._id,
-            candidateInfo:profileInfo?.candidateInfo,
+            recruiterInfo:recruiterFormData,
             isPremiumUser:profileInfo?.isPremiumUser,
             role:profileInfo?.role,
             userId:profileInfo.userId,
@@ -140,7 +134,7 @@ useEffect(() => {
                      }
                      formData={profileInfo?.role==="candidate"?candidateFormData: recruiterFormData}
                      buttonText="Update"
-                     setFormData={profileInfo?.role==="candidate"?setCandidateFromData:""}
+                     setFormData={profileInfo?.role==="candidate"?setCandidateFromData:setRecruiterFromData}
                     /> 
                 </div>
              </div>

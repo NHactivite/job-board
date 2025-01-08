@@ -59,7 +59,7 @@ function Header({user,role}) {
                         </Button>   
                     </SheetTrigger>
                     <SheetContent side="left">
-                          <Link className="mr-6 hidden lg:flex" href={"#"}>
+                          <Link className="mr-6 hidden lg:flex" href={"/"}>
                           <SheetTitle>Job</SheetTitle>
                           </Link>
                           <div className="grid gap-2 py-6">
@@ -78,7 +78,7 @@ function Header({user,role}) {
                           </div>
                     </SheetContent>
                 </Sheet>
-                <Link className="hidden lg:flex mr-6 " href={"/"}>Jobs</Link>
+                <Link className="hidden font-bold text-3xl lg:flex mr-6 " href={"/"}>Jobs</Link>
                 <nav className="ml-auto hidden lg:flex gap-6">
                     {
                         menuItems.map((item,idx)=>(

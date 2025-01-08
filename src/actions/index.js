@@ -122,12 +122,12 @@ export async function createFilterCategoryAction(){
 
 export async function updateProfileAction(data,pathToRevalidate){
   await ConnectDB();
-  const { _id,candidateInfo,isPremiumUser,role,userId,email}=data;
+  const { _id,candidateInfo,recruiterInfo,isPremiumUser,role,userId,email}=data;
 
   await Profile.findOneAndUpdate({
     _id:_id
   },{
-    candidateInfo,isPremiumUser,role,userId,email
+    recruiterInfo,candidateInfo,isPremiumUser,role,userId,email
   },{new:true});
    revalidatePath(pathToRevalidate)
 }
