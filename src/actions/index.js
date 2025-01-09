@@ -2,13 +2,16 @@
 
 import Application from "@/models/application";
 import Job from "@/models/job";
-import { func } from "joi";
-
 const { default: ConnectDB } = require("@/database");
 const { default: Profile } = require("@/models/profile");
 import { revalidatePath } from "next/cache";
 
+import { Cashfree} from "cashfree-pg";
 
+// Initialize Cashfree with your credentials
+Cashfree.XClientId = process.env.CLIENT_ID
+Cashfree.XClientSecret = process.env.CLIENT_SECRET
+Cashfree.XEnvironment = Cashfree.Environment.SANDBOX
 // crete profile action
 
 
@@ -130,4 +133,47 @@ export async function updateProfileAction(data,pathToRevalidate){
     recruiterInfo,candidateInfo,isPremiumUser,role,userId,email
   },{new:true});
    revalidatePath(pathToRevalidate)
+}
+
+// export async function createPaymentAction(data){
+//   const {amount,customer_id,customer_phone}=data;
+//   let request = {
+//     "order_amount":  amount,
+//     "order_currency": "INR",
+//     "customer_details": {
+//         "customer_id": customer_id,
+//         "customer_phone": customer_phone,
+//     },
+//   }
+//   Cashfree.PGCreateOrder("2023-08-01", request).then((response) => {
+//     console.log(response.data)
+//     return response.data
+//   })
+//     .catch((error) => {
+//       console.error('Error setting up order request:', error.response.data);
+//     });
+// }
+
+export async function createPaymentAction(data) {
+  const { amount, customer_id, customer_phone } = data;
+
+ 
+  const request = {
+    order_amount: amount,
+    order_currency: "INR",
+    customer_details: {
+      customer_id: customer_id,
+      customer_phone: customer_phone, // Use a dummy email for sandbox
+    },
+    order_id: `order_${Date.now()}`,
+  };
+
+  try {
+    const response = await Cashfree.PGCreateOrder("2023-08-01", request);
+    console.log("Order created successfully:", response.data);
+    return response.data; // Return the data to the caller
+  } catch (error) {
+    console.error("Error setting up order request:", error?.response?.data || error);
+    throw error; // Propagate error for better handling in the caller
+  }
 }

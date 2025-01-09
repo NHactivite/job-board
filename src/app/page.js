@@ -1,5 +1,5 @@
 import { fetchProfileAction } from '@/actions';
-import { Button } from '@/components/ui/button';
+import { Cashfree} from '@cashfreepayments/cashfree-js';
 import { currentUser } from '@clerk/nextjs/server'
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -12,6 +12,7 @@ export default async function Home() {
    console.log(ProfileInfo?.role,"profileinfo in /");
    
   if(user && !ProfileInfo?._id) redirect("/onboard")
+
 
   return (
      <>

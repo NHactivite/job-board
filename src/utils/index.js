@@ -234,3 +234,22 @@ export function formUrlQuery({params,dataToAdd}){
     })
 }
 
+
+
+export const memberShipPlans=[
+    {
+        heading:"Tier 1",
+        price:100,
+        type:"basic",
+    },
+    {
+        heading:"Tier 2",
+        price:500,
+        type:"teams",
+    },
+    {
+        heading:"Tier 3",
+        price:1000,
+        type:"enterprise",
+    },
+]
