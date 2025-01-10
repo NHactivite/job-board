@@ -102,7 +102,6 @@ useEffect(() => {
     const handleUpdateAccount=async()=>{
         await updateProfileAction(profileInfo?.role==="candidate"?{
             _id:profileInfo?._id,
-            candidateInfo:candidateFormData,
             isPremiumUser:profileInfo?.isPremiumUser,
             role:profileInfo?.role,
             userId:profileInfo.userId,

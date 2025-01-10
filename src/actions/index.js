@@ -135,45 +135,55 @@ export async function updateProfileAction(data,pathToRevalidate){
    revalidatePath(pathToRevalidate)
 }
 
-// export async function createPaymentAction(data){
-//   const {amount,customer_id,customer_phone}=data;
-//   let request = {
-//     "order_amount":  amount,
-//     "order_currency": "INR",
-//     "customer_details": {
-//         "customer_id": customer_id,
-//         "customer_phone": customer_phone,
-//     },
-//   }
-//   Cashfree.PGCreateOrder("2023-08-01", request).then((response) => {
-//     console.log(response.data)
-//     return response.data
-//   })
-//     .catch((error) => {
-//       console.error('Error setting up order request:', error.response.data);
-//     });
-// }
 
 export async function createPaymentAction(data) {
-  const { amount, customer_id, customer_phone } = data;
+  const { amount, customer_id, customer_email } = data;
 
- 
   const request = {
     order_amount: amount,
     order_currency: "INR",
     customer_details: {
       customer_id: customer_id,
-      customer_phone: customer_phone, // Use a dummy email for sandbox
+      customer_phone:"9999999999", // Use a dummy email for sandbox
+      customer_email: customer_email, 
     },
     order_id: `order_${Date.now()}`,
   };
 
   try {
     const response = await Cashfree.PGCreateOrder("2023-08-01", request);
-    console.log("Order created successfully:", response.data);
     return response.data; // Return the data to the caller
   } catch (error) {
     console.error("Error setting up order request:", error?.response?.data || error);
     throw error; // Propagate error for better handling in the caller
   }
 }
+
+export const paymentVerify = async (order_id) => {
+  try {
+    const response = await Cashfree.PGOrderFetchPayments("2023-08-01", order_id);
+    return response.data; // Ensure data is returned
+  } catch (error) {
+    console.error("Error fetching payment:", error);
+    throw error; // Re-throw the error to handle it upstream
+  }
+};
+
+export async function createOrderAction(data,pathToRevalidate){
+  try {
+    await ConnectDB();
+    const { _id,candidateInfo,recruiterInfo,isPremiumUser,role,userId,email,memberShipType,memberShipStartDate,memberShipEndDate}=data;
+  
+    await Profile.findOneAndUpdate({
+      _id:_id
+    },{
+      recruiterInfo,candidateInfo,isPremiumUser,role,userId,email,memberShipType,memberShipStartDate,memberShipEndDate
+    },{new:true});
+     revalidatePath(pathToRevalidate)
+
+  } catch (error) {
+    throw error
+  }
+}
+
+
