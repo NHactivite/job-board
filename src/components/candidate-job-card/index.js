@@ -1,20 +1,17 @@
 "use client"
 
 import { createJobApplicationAction } from "@/actions"
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle
+} from "@/components/ui/drawer"
 import { Button } from "../ui/button"
 
 const { Fragment, useState, useEffect } = require("react")
 const { default: CommonCard } = require("../common-card")
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer"
 
 
 export const CandidateJobCard=({jobItem,profileInfo,jobApplication})=>{

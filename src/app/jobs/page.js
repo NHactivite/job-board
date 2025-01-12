@@ -7,14 +7,9 @@ import { redirect } from "next/navigation";
 
 async function Jobs({searchParams}){
 const value=await searchParams
- console.log(value,"job page");
  
     const user =await currentUser();
-    console.log(user);
-    
     const profileInfo=await fetchProfileAction(user?.id)
-    console.log(profileInfo);
-    
     //  if(user && !profileInfo?._id) redirect("/onboard")
       if (user && !profileInfo?._id) {
         redirect("/onboard");

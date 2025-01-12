@@ -17,7 +17,6 @@ Cashfree.XEnvironment = Cashfree.Environment.SANDBOX
 
 export const createProfileAction=async(formData,pathToRevalidate)=>{
      await ConnectDB();
-     console.log(formData);
      
      await Profile.create(formData);
      revalidatePath(pathToRevalidate);

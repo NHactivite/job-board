@@ -6,11 +6,8 @@ import { redirect } from 'next/navigation';
 
 export default async function Home() {
   const user=await currentUser()
-  console.log(user,"user in /");
   
   const ProfileInfo= await fetchProfileAction(user?.id);
-   console.log(ProfileInfo?.role,"profileinfo in /");
-   
   if(user && !ProfileInfo?._id) redirect("/onboard")
 
 

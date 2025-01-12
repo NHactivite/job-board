@@ -1,9 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import CommonCard from "../common-card";
-import { Button } from "../ui/button";
 import JobApplicant from "../job-applicants";
+import { Button } from "../ui/button";
 
 
 const RecruiterJobCard = ({jobItem,jobApplication}) => {

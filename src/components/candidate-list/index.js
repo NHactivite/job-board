@@ -20,7 +20,6 @@ function CandidateList({
    
   const handleFetchCandidateDetails=async(id)=>{
          const data=await getCandidateDetailsByIdAction(id)
-         console.log(data);
          
          if(data){
           setCurrentCandidateDetails(data);
@@ -33,17 +32,13 @@ function CandidateList({
       .from("job-board-public")
       .getPublicUrl(currentCandidateDetails?.candidateInfo.resume);
   
-    // Log for debugging
-    console.log("Public URL data:", data);
-  
     if (error) {
       console.error("Error fetching public URL:", error.message);
       return;
     }
   
     if (data?.publicUrl) {
-      console.log("Resume link:", data.publicUrl);
-  
+     
       // Create and trigger the download link
       const a = document.createElement("a");
       a.href = data.publicUrl; // Ensure the publicUrl is correctly assigned
@@ -56,18 +51,14 @@ function CandidateList({
       console.error("No public URL found!");
     }
   };
-  console.log("current candaidate id",currentCandidateDetails?.userId)
-
   const handleUpdateJobStatus=async(getCrruentStatus)=>{
        let copyJobApplicats=[...jobApplication];
        const indexOfCurrentJobApplicant=copyJobApplicats.findIndex(item=>item.candidateUserId===currentCandidateDetails?.userId)
-       console.log("jiii",indexOfCurrentJobApplicant);
-
+       
        const jobApplicatsUpdate={
         ...copyJobApplicats[indexOfCurrentJobApplicant],
            status:copyJobApplicats[indexOfCurrentJobApplicant].status.concat(getCrruentStatus)
        }
-        console.log(jobApplicatsUpdate,"lll");
         await updateJobApplication(jobApplicatsUpdate,"/jobs")
   }
   

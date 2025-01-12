@@ -85,7 +85,7 @@ function Header({user,role}) {
                             item.show?
                             <Link key={idx}
                             onClick={()=>sessionStorage.removeItem("filterParams")}
-                            href={item.path} className="group inline-flex h-9 w-max items-center rounded-md bg-white px-4 py-2 text-sm font-medium">{item.label}</Link>
+                            href={item.path} className="group inline-flex h-9 w-max items-center rounded-md bg-white px-4 py-2 text-sm font-medium active:bg-black active:text-white">{item.label}</Link>
                             :null
                         ))
                     }

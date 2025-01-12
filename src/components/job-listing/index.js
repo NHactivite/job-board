@@ -42,14 +42,11 @@ function JobListing({
     let cpyFilterParams = { ...filterParams };
     const indexOfCurrentSection =
       Object.keys(cpyFilterParams).indexOf(getSectionId);
-    console.log(indexOfCurrentSection, "ll");
-
     if (indexOfCurrentSection === -1) {
       cpyFilterParams = {
         ...cpyFilterParams,
         [getSectionId]: [getCurrentOption],
       };
-      console.log(cpyFilterParams, "P");
     } else {
       const indexOfCurrentOption =
         cpyFilterParams[getSectionId].indexOf(getCurrentOption);
@@ -91,8 +88,8 @@ function JobListing({
           <div className="flex items-center">
             {profileInfo?.role === "candidate" ? (
               <Menubar>
-                {filterMenus.map((filterMenu) => (
-                  <MenubarMenu>
+                {filterMenus.map((filterMenu,idx) => (
+                  <MenubarMenu key={idx}>
                     <MenubarTrigger>{filterMenu.name}</MenubarTrigger>
                     <MenubarContent>
                       {filterMenu.options.map((option, idx) => (
