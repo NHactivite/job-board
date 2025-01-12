@@ -1,20 +1,21 @@
 "use client";
+import { createProfileAction } from "@/actions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import CommonFrom from "../common-form";
 import {
   candidateOnboardFRomControl,
   initialCandidateFromData,
   initialRecruiterFromData,
   recruiterOnboardFRomControl,
 } from "@/utils";
-import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { createProfileAction } from "@/actions";
 import { createClient } from "@supabase/supabase-js";
-const superbaseClient = createClient(
-  "https://yschbhvplekqecqsuxrk.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlzY2hiaHZwbGVrcWVjcXN1eHJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzUzMDI2OTksImV4cCI6MjA1MDg3ODY5OX0.NGS0j7VW3c0FnIE4KT97urpLtejhdToM9jpcs3w91Us"
-);
+import { useState } from "react";
+import CommonFrom from "../common-form";
+
+const supabaseClient = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+)
 
 function OnBoard() {
   const { user } = useUser();
@@ -37,7 +38,7 @@ function OnBoard() {
 
   const handleUploadPdfToSuperbase = async () => {
     const sanitizedFileName = file.name.replace(/\s+/g, "_");
-    const { data, error } = await superbaseClient.storage
+    const { data, error } = await supabaseClient.storage
       .from("job-board-public")
       .upload(`${sanitizedFileName}_${user.id}`,file,
         {
@@ -82,13 +83,12 @@ function OnBoard() {
     if (file && !fileStatus) handleUploadPdfToSuperbase(); 
     const sanitizedFileName = file.name.replace(/\s+/g, "_");
     if(fileStatus){
-      const { data } = await superbaseClient
+      const { data } = await supabaseClient
       .storage
       .from('job-board') // Specify the bucket name
       .remove([`${sanitizedFileName}_${user.id}`]); // Pass the path of the file to delete as an array
      
        if(data[0]?.name==`${sanitizedFileName}_${user.id}`){
-        console.log('File deleted successfully:', data);
         setFileStatus(false)
        }
     }
@@ -140,8 +140,6 @@ function OnBoard() {
 
     await createProfileAction(data, "/onboard");
   };
-  console.log(candidateFromData);
-  
   return (
     <div className="bg-white">
       <Tabs value={currentTab} onValueChange={handleTabChange}>
