@@ -36,7 +36,8 @@ function JobListing({
   const router=useRouter()
 
 
-
+  console.log(jobList,"list");
+  
 
   const handleFilter = (getSectionId, getCurrentOption) => {
     let cpyFilterParams = { ...filterParams };
@@ -120,7 +121,7 @@ function JobListing({
                 ))}
               </Menubar>
             ) : (
-              <PostNewJob profileInfo={profileInfo} user={user} />
+              <PostNewJob profileInfo={profileInfo} user={user} currentCount={jobList.length}/>
             )}
           </div>
         </div>
@@ -137,12 +138,16 @@ function JobListing({
                             jobItem={jobItem}
                             profileInfo={profileInfo}
                             jobApplication={jobApplication}
+                            currentCount={jobList.length}
+                            
                           />
                         ) : (
                           <RecruiterJobCard
                             jobItem={jobItem}
                             key={idx}
                             jobApplication={jobApplication}
+                            currentCount={jobList.length}
+                            profileInfo={profileInfo}
                           />
                         )
                       )
