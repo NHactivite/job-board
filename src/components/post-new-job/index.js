@@ -46,8 +46,8 @@ export default function PostNewJob({profileInfo,user,currentCount}){
    return(
      <>
        {
-            BtnDisabled && profileInfo.memberShipType==="teams"?
-            <h1 className="mx-5">Your Current Plan Support only 3 Post to more Posting you need to upgred your plan</h1>
+            BtnDisabled?
+            <h1 className="mx-5">For more Job Posting you need to upgred your plan</h1>
             :null
        }
        
