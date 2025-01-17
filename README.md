@@ -146,17 +146,15 @@ npm install
 
 **Set up environment variables in a .env.local file:**
 
-**MONGO_URL**=your_mongodb_connection_string
-**NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY**=your_clerk_publishable_key
-**CLERK_SECRET_KEY**=your_clerk_secret_key
-**CLIENT_ID**=your_cashfree_client_id
-**CLIENT_SECRET**=your_cashfree_client_secret
-
-**NEXT_PUBLIC_CLERK_SIGN_IN_URL**=/sign-in
-**NEXT_PUBLIC_CLERK_SIGN_UP_URL**=/sign-up
-
-**NEXT_PUBLIC_SUPABASE_URL**=your_supabase_url
-**NEXT_PUBLIC_SUPABASE_ANON_KEY**=your_supabase_anon_key
+**MONGO_URL**=your_mongodb_connection_string<br/>
+**NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY**=your_clerk_publishable_key<br/>
+**CLERK_SECRET_KEY**=your_clerk_secret_key<br/>
+**CLIENT_ID**=your_cashfree_client_id<br/>
+**CLIENT_SECRET**=your_cashfree_client_secret<br/>
+**NEXT_PUBLIC_CLERK_SIGN_IN_URL**=/sign-in<br/>
+**NEXT_PUBLIC_CLERK_SIGN_UP_URL**=/sign-up<br/>
+**NEXT_PUBLIC_SUPABASE_URL**=your_supabase_url<br/>
+**NEXT_PUBLIC_SUPABASE_ANON_KEY**=your_supabase_anon_key<br/>
 
 Start the development server:
 
