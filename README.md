@@ -134,7 +134,7 @@ Setup
 
 Clone the repository:
 
-git clone https://github.com/your-username/job-board.git
+https://github.com/NHactivite/job-board.git
 
 Navigate to the project directory:
 
