@@ -35,10 +35,6 @@ function JobListing({
   const searchParams=useSearchParams()
   const router=useRouter()
 
-
-  console.log(jobList,"list");
-  
-
   const handleFilter = (getSectionId, getCurrentOption) => {
     let cpyFilterParams = { ...filterParams };
     const indexOfCurrentSection =
