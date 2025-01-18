@@ -16,7 +16,7 @@ useEffect(() => {
       cashfreeRef.current = await load({
         mode: "sandbox", // Adjust to "production" for live
       });
-      console.log("Cashfree SDK loaded:", cashfreeRef.current);
+      
     } catch (error) {
       console.error("Failed to load payment gateway:", error);
     }
@@ -74,8 +74,7 @@ useEffect(() => {
   
 
   const verifyPayment = async ({orderId,plan}) => {
-    console.log(plan,"kkkkoo");
-    
+   
     try {
       const memberShipStartDate = getCurrentDate(); // Current date in YYYY-MM-DD format
       const memberShipEndDate = getEndDate(plan.type==="basic"?2:plan.type==="teams"?6:12); // 6 months from the current date
@@ -131,9 +130,7 @@ useEffect(() => {
   const trueIdx = memberShipPlans.findIndex(
     (plan) => ProfileInfo.ProfileInfo.memberShipType === plan.type
   );
-  
-  console.log(trueIdx,"uoo");
-  
+
     return(
         <div className="mx-auto max-w-7xl">
              <div className="flex items-baseline justify-between border-b pb-6 pt-24">
@@ -168,7 +165,25 @@ useEffect(() => {
                                 </h1>
                             </div>
                             }
-                           description={plan.type}
+                           description={
+                            plan.type==="teams"?<div>
+                            <span className="font-bold text-lg">teams</span>
+                            <h1 className="font-bold ">you can apply 10 jobs validity 6 months</h1>
+                           </div>:
+                            plan.type==="basic"?<div>
+                            <span className="font-bold text-lg">basic</span>
+                            <h1 className="font-bold ">you can apply 5 jobs validity 3 months</h1>
+                           </div>:
+                           
+                           plan.type==="enterprise"?<div>
+                           <span className="font-bold text-lg">enterprise</span>
+                           <h1 className="font-bold ">you can apply unlimited jobs validity 1 year</h1>
+                          </div>:
+                           null
+                          
+                          }
+
+
                            footerContent={
                             <Button onClick={()=>handlePay(plan)}>Update Plan</Button>
                            }

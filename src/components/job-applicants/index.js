@@ -1,6 +1,5 @@
 "use client"
 
-import { useEffect } from "react";
 import CandidateList from "../candidate-list";
 import { Drawer, DrawerContent, DrawerTitle } from "../ui/drawer";
 import { ScrollArea } from "../ui/scroll-area";
@@ -13,7 +12,6 @@ const JobApplicant=(
     setCurrentCandidateDetails,
     showCurrentCandidateDetailsModel,
     setShowCurrentCandidateDetailsModel,
-    jobItem,
     jobApplication}
 )=>{
     return(

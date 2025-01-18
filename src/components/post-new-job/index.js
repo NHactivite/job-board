@@ -36,12 +36,9 @@ export default function PostNewJob({profileInfo,user,currentCount}){
   })
   setShowJobDialog(false)
   }
-  console.log(currentCount,"currcount");
-  console.log(profileInfo,"info");
-  
   
 
-  const BtnDisabled=profileInfo.memberShipType==="teams" && currentCount===3?true:profileInfo.memberShipType==="basic"&& currentCount===2?true:false
+  const BtnDisabled=profileInfo.memberShipType==="teams" && currentCount===10?true:profileInfo.memberShipType==="basic"&& currentCount===5?true:false
 
    return(
      <>

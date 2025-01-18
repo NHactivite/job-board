@@ -14,13 +14,26 @@ const { Fragment, useState, useEffect } = require("react")
 const { default: CommonCard } = require("../common-card")
 
 
-export const CandidateJobCard=({jobItem,profileInfo,jobApplication})=>{
+export const CandidateJobCard=({currentCount,jobItem,profileInfo,jobApplication})=>{
  const [showDetailsDrawer,setShowDetailsDrawer]=useState(false)
  const [applied,setApplied]=useState(false);
+ const [count,setCount]=useState(0)
 
+ useEffect(() => {
+  // Calculate the count outside of the render phase
+  const matchingCount = jobApplication?.reduce((acc, item) => {
+    return item.candidateUserId === profileInfo?.userId ? acc + 1 : acc;
+  }, 0);
+
+  // Update the count state
+  setCount(matchingCount);
+}, [jobApplication, profileInfo]); 
+ 
+ 
  useEffect(()=>{
   jobApplication?.map((item)=>(
-     (item.candidateUserId===profileInfo?.userId && item.jobId===jobItem._id)?setApplied(true)
+     (item.candidateUserId===profileInfo?.userId && item.jobId===jobItem._id)?
+      setApplied(true)
      :null
   
   ))
@@ -38,7 +51,16 @@ export const CandidateJobCard=({jobItem,profileInfo,jobApplication})=>{
     },"/jobs");
     setShowDetailsDrawer(false)
   }
-
+  
+ 
+  const BtnDisabled =
+  profileInfo.memberShipType === "teams" && count === 10
+    ? true
+    : profileInfo.memberShipType === "basic" && count === 5
+    ? true
+    : !profileInfo.memberShipType && count === 2
+    ? true
+    : false;
     return(
         <Fragment>
             <Drawer open={showDetailsDrawer} onOpenChange={setShowDetailsDrawer}>
@@ -59,8 +81,15 @@ export const CandidateJobCard=({jobItem,profileInfo,jobApplication})=>{
                      <DrawerTitle className="text-4xl font-extrabold text-gray-800">
                         {jobItem.title}
                      </DrawerTitle>
+                    {
+                      BtnDisabled && !applied?
+                      <div>
+                      <h1 className="text-xl font-bold mt-3 ">To Apply more jobs you need to to Upgrad your plan</h1>
+                     </div>
+                      :null
+                    }
                      <div className="flex gap-3">
-                       <Button disabled={applied} onClick={applied?null:handleJobApply} className=" flex h-11 items-center justify-center px-5 disabled:opacity-55">
+                       <Button disabled={applied || BtnDisabled} onClick={applied?null:handleJobApply} className=" flex h-11 items-center justify-center px-5 disabled:opacity-55">
                          {
                           applied?"Already applied":"Apply"
                           
