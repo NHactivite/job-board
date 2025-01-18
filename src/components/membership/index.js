@@ -1,31 +1,32 @@
-"use client"
+"use client";
 
 import { memberShipPlans } from "@/utils";
 import CommonCard from "../common-card";
 import { Button } from "../ui/button";
 import { useEffect, useRef } from "react";
 import { load } from "@cashfreepayments/cashfree-js";
-import { createOrderAction, createPaymentAction, paymentVerify } from "@/actions";
+import {
+  createOrderAction,
+  createPaymentAction,
+  paymentVerify,
+} from "@/actions";
 
+function MemberShipPage(ProfileInfo) {
+  const cashfreeRef = useRef(null);
+  useEffect(() => {
+    const initializeSDK = async () => {
+      try {
+        cashfreeRef.current = await load({
+          mode: "sandbox", // Adjust to "production" for live
+        });
+      } catch (error) {
+        console.error("Failed to load payment gateway:", error);
+      }
+    };
 
-function MemberShipPage(ProfileInfo){
-const cashfreeRef = useRef(null);
-useEffect(() => {
-  const initializeSDK = async () => {
-    try {
-      cashfreeRef.current = await load({
-        mode: "sandbox", // Adjust to "production" for live
-      });
-      
-    } catch (error) {
-      console.error("Failed to load payment gateway:", error);
-    }
-  };
+    initializeSDK();
+  }, []);
 
-  initializeSDK();
-}, []);
-
-    
   const getSessionId = async (plan) => {
     try {
       const res = await createPaymentAction({
@@ -54,71 +55,78 @@ useEffect(() => {
     const today = new Date();
     return today.toISOString().split("T")[0];
   };
-  
+
   const getEndDate = (monthsToAdd) => {
     const today = new Date();
-  
+
     // Save the original date
     const currentDate = today.getDate();
-  
+
     // Add months
     today.setMonth(today.getMonth() + monthsToAdd);
-  
+
     // If the resulting month doesn't have the original day, adjust
-  if (today.getDate() < currentDate) {
-    today.setDate(0); // Move to the last valid day of the previous month
-  }
-  
+    if (today.getDate() < currentDate) {
+      today.setDate(0); // Move to the last valid day of the previous month
+    }
+
     return today.toISOString().split("T")[0]; // Format: YYYY-MM-DD
   };
-  
 
-  const verifyPayment = async ({orderId,plan}) => {
-   
+  const verifyPayment = async ({ orderId, plan }) => {
     try {
       const memberShipStartDate = getCurrentDate(); // Current date in YYYY-MM-DD format
-      const memberShipEndDate = getEndDate(plan.type==="basic"?2:plan.type==="teams"?6:12); // 6 months from the current date
-      let data= await paymentVerify(orderId);
+      const memberShipEndDate = getEndDate(
+        plan.type === "basic" ? 2 : plan.type === "teams" ? 6 : 12
+      ); // 6 months from the current date
+      let data = await paymentVerify(orderId);
 
       if (data && data[0].payment_status === "SUCCESS") {
-        const response=await createOrderAction({
-          ...ProfileInfo.ProfileInfo,
-          isPremiumUser:true,
-          memberShipType:plan.type,
-          memberShipStartDate,
-          memberShipEndDate
-        },"/membership")
+        const response = await createOrderAction(
+          {
+            ...ProfileInfo.ProfileInfo,
+            isPremiumUser: true,
+            memberShipType: plan.type,
+            memberShipStartDate,
+            memberShipEndDate,
+          },
+          "/membership"
+        );
       }
     } catch (error) {
-      console.log("Payment verification failed",error);
-      
+      console.log("Payment verification failed", error);
     }
   };
 
   const handlePay = async (plan) => {
     try {
       // Check if the cashfreeRef is loaded and the checkout method is available
-      if (cashfreeRef.current && typeof cashfreeRef.current.checkout === "function") {
-      
+      if (
+        cashfreeRef.current &&
+        typeof cashfreeRef.current.checkout === "function"
+      ) {
         // Get the payment session ID (this should be returned from your backend or API)
         const sessionId = await getSessionId(plan); // Replace with actual method to fetch the session ID
-  
+
         // If session ID is invalid or not found, return early
         if (!sessionId) return;
-  
+
         // Prepare checkout options
         const checkoutOptions = {
           paymentSessionId: sessionId.paymentSessionId,
           redirectTarget: "_modal", // Ensures the payment opens in a modal
         };
-  
+
         // Initiate the payment flow
-        cashfreeRef.current.checkout(checkoutOptions).then(() => {
-          // After payment is initiated, verify the payment
-          verifyPayment({ orderId: sessionId.orderId, plan });
-        }).catch(error => {
-          console.error("Error during checkout:", error);
-        });
+        cashfreeRef.current
+          .checkout(checkoutOptions)
+          .then(() => {
+            // After payment is initiated, verify the payment
+            verifyPayment({ orderId: sessionId.orderId, plan });
+          })
+          .catch((error) => {
+            console.error("Error during checkout:", error);
+          });
       } else {
         console.error("checkout function is not available in the Cashfree SDK");
       }
@@ -131,81 +139,100 @@ useEffect(() => {
     (plan) => ProfileInfo.ProfileInfo.memberShipType === plan.type
   );
 
-    return(
-        <div className="mx-auto max-w-7xl">
-             <div className="flex items-baseline justify-between border-b pb-6 pt-24">
-                  <h1 className="text-4xl font-bold tracking-tight text-gray-900">
-                     {
-                      ProfileInfo.ProfileInfo?.isPremiumUser?"You are a Premimum User":"Choose Your Best Plane"
-                     }
-                  </h1>
-                  <div>
-                    {
-                      ProfileInfo.ProfileInfo?.isPremiumUser?
-                      <Button>{ProfileInfo.ProfileInfo?.memberShipType}</Button>
-                      :null
-                    }
-                  </div>
-             </div>
-             <div className="py-20 pb-16 pt-3 ">
-                 <div className="container mx-auto p-0 space-y-8">
-                     <div className="grid grid-cols-1 gap-x-4 gap-y-8 md:grid-cols-2 lg:grid-cols-3">
-                      
-                         {  
-                         
-                            memberShipPlans.slice(trueIdx+1).map((plan,idx)=>(
-                               <CommonCard  key={idx}
-                           title={
-                           <div className="flex justify-between">
-                                <span>
-                                    {`$ ${plan.price} /yr`}
-                                </span>
-                                <h1>
-                                    {plan.heading}
-                                </h1>
-                            </div>
-                            }
-                           description={
-                            plan.type==="teams"?<div>
-                            <span className="font-bold text-lg">teams</span>
-                            <h1 className="font-bold ">you can apply 10 jobs validity 6 months</h1>
-                           </div>:
-                            plan.type==="basic"?<div>
-                            <span className="font-bold text-lg">basic</span>
-                            <h1 className="font-bold ">you can apply 5 jobs validity 3 months</h1>
-                           </div>:
-                           
-                           plan.type==="enterprise"?<div>
-                           <span className="font-bold text-lg">enterprise</span>
-                           <h1 className="font-bold ">you can apply unlimited jobs validity 1 year</h1>
-                          </div>:
-                           null
-                          
-                          }
-
-
-                           footerContent={
-                            <Button onClick={()=>handlePay(plan)}>Update Plan</Button>
-                           }
-                        />
-                        ))
-                         }
-
-                     </div>
-                     {
-                          trueIdx===-1?null:
-                          <div className="h-32 flex  justify-around items-end pb-5">
-                            <h1 className="text-2xl font-bold">{`Your Current plan is ${ProfileInfo.ProfileInfo.memberShipType} `}</h1>
-                            
-                               <span className="text-xl font-semibold">{`MemberShip buy in ${ProfileInfo.ProfileInfo.memberShipStartDate}`}</span>
-                               <span className="text-xl font-semibold">{`MemberShip End in ${ProfileInfo.ProfileInfo.memberShipEndDate}`}</span>
-                            
-                          </div>
-                         }
-                 </div>
-             </div>
+  return (
+    <div className="mx-auto max-w-7xl">
+      <div className="flex items-baseline justify-between border-b pb-6 pt-24">
+        <h1 className="text-4xl font-bold tracking-tight text-gray-900">
+          {ProfileInfo.ProfileInfo?.isPremiumUser
+            ? "You are a Premimum User"
+            : "Choose Your Best Plane"}
+        </h1>
+        <div>
+          {ProfileInfo.ProfileInfo?.isPremiumUser ? (
+            <Button>{ProfileInfo.ProfileInfo?.memberShipType}</Button>
+          ) : null}
         </div>
-    )
+      </div>
+      <div className="py-20 pb-16 pt-3 ">
+        <div className="container mx-auto p-0 space-y-8">
+          <div className="grid grid-cols-1 gap-x-4 gap-y-8 md:grid-cols-2 lg:grid-cols-3">
+            {memberShipPlans.slice(trueIdx + 1).map((plan, idx) => (
+              <CommonCard
+                key={idx}
+                title={
+                  <div className="flex justify-between">
+                    <span>{`$ ${plan.price} /yr`}</span>
+                    <h1>{plan.heading}</h1>
+                  </div>
+                }
+                description={
+                  plan.type === "teams" ? (
+                    <div>
+                      <span className="font-bold text-lg">teams</span>
+                      <h1 className="font-bold ">
+                        you can apply for 10 jobs with a validity 6 months
+                      </h1>
+                    </div>
+                  ) : plan.type === "basic" ? (
+                    <div>
+                      <span className="font-bold text-lg">basic</span>
+                      <h1 className="font-bold ">
+                        you can apply for 5 jobs with a validity 3 months
+                      </h1>
+                    </div>
+                  ) : plan.type === "enterprise" ? (
+                    <div>
+                      <span className="font-bold text-lg">enterprise</span>
+                      <h1 className="font-bold ">
+                        you can apply for unlimited jobs with a validity 1 year
+                      </h1>
+                    </div>
+                  ) : null
+                }
+                footerContent={
+                  <Button onClick={() => handlePay(plan)}>Update Plan</Button>
+                }
+              />
+            ))}
+          </div>
+          {trueIdx !== -1 && (
+
+            <div className="h-32 flex gap-4 justify-around items-end pb-5">
+               <h1 className="text-xl font-bold">
+                {`Your Current Plan: ${ProfileInfo?.ProfileInfo?.memberShipType}`}
+              </h1>
+              { ProfileInfo?.ProfileInfo?.memberShipType=== "teams" ? (
+                    
+                      <h1 className="text-xl font-semibold ">
+                        you can apply for 10 jobs
+                      </h1>
+                    
+                  ) : ProfileInfo?.ProfileInfo?.memberShipType=== "basic" ? (
+                    
+                      <h1 className="text-xl font-semibold ">
+                        you can apply for 5 jobs
+                      </h1>
+                    
+                  ) : ProfileInfo?.ProfileInfo?.memberShipTypee === "enterprise" ? (
+                    
+                      <h1 className="text-xl font-semibold ">
+                        you can apply for unlimited jobs
+                      </h1>
+                    
+                  ) : null}
+             
+              <span className="text-xl font-semibold">
+                {`Membership Purchased On: ${ProfileInfo?.ProfileInfo?.memberShipStartDate}`}
+              </span>
+              <span className="text-xl font-semibold">
+                {`Membership Expires On: ${ProfileInfo?.ProfileInfo?.memberShipEndDate}`}
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default MemberShipPage;
