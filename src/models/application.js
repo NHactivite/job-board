@@ -7,7 +7,11 @@ const ApplicationSchema= new mongoose.Schema({
     candidateUserId:String,
     status:Array,
     jobId:String,
-    jobAppliedDate:String
+    jobAppliedDate:String,
+    interviewDate:{
+        type:Date,
+        default:""
+    }
 })
 
 const Application=mongoose.models.Application || mongoose.model("Application",ApplicationSchema);

@@ -60,12 +60,15 @@ function OnBoard() {
         }
       } else
       if(data){
+        const res = supabaseClient.storage.from("job-board-public").getPublicUrl(data.path)
         setFileStatus(true)
          setCandidateFromData({
           ...candidateFromData,
-          resume:data.path
+          resume:{
+           path: data.path,
+           publicPath:res.data.publicUrl
+          }
          })
-        
           }
        
       
@@ -81,15 +84,22 @@ function OnBoard() {
   
      e.preventDefault();
     if (file && !fileStatus) handleUploadPdfToSuperbase(); 
+   
     const sanitizedFileName = file.name.replace(/\s+/g, "_");
     if(fileStatus){
-      const { data } = await supabaseClient
-      .storage
-      .from('job-board') // Specify the bucket name
+      const { data } = await supabaseClient.storage
+      .from('job-board-public') // Specify the bucket name
       .remove([`${sanitizedFileName}_${user.id}`]); // Pass the path of the file to delete as an array
-     
+    
        if(data[0]?.name==`${sanitizedFileName}_${user.id}`){
         setFileStatus(false)
+        setCandidateFromData({
+          ...candidateFromData,
+          resume:{
+            path: "",
+            publicPath:""
+          },
+        });
        }
     }
    
@@ -140,11 +150,12 @@ function OnBoard() {
 
     await createProfileAction(data, "/onboard");
   };
+
   return (
-    <div className="bg-white">
+    <div className="bg-white p-5 min-h-screen">
       <Tabs value={currentTab} onValueChange={handleTabChange}>
         <div className="w-full">
-          <div className="flex items-baseline justify-between border-b pb-6 pt-24">
+          <div className="flex items-baseline justify-between border-b ">
             <h1 className="text-4xl font-bold tracking-tight text-gray-900">
               Welcome to onboarding
             </h1>

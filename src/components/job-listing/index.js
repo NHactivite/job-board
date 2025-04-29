@@ -1,9 +1,12 @@
 "use client";
-
 import { filterMenuData, formUrlQuery } from "@/utils";
+import { motion } from "framer-motion";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { CandidateJobCard } from "../candidate-job-card";
 import PostNewJob from "../post-new-job";
 import RecruiterJobCard from "../recruiter-job-card";
+import { Label } from "../ui/label";
 import {
   Menubar,
   MenubarContent,
@@ -11,9 +14,6 @@ import {
   MenubarMenu,
   MenubarTrigger,
 } from "../ui/menubar";
-import { Label } from "../ui/label";
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 
 function JobListing({
   user,
@@ -22,6 +22,32 @@ function JobListing({
   jobApplication,
   filterCategories,
 }) {
+
+ const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1, // Stagger the animations of children
+      },
+    },
+  }
+
+  // Animation variants for each item
+  const itemVariants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 15,
+      },
+    },
+  }
+
+
   const filterMenus = filterMenuData.map((item) => ({
     id: item.id,
     name: item.label,
@@ -73,11 +99,24 @@ function JobListing({
     }
   },[filterParams,searchParams])
 
+  const pageVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { duration: 0.8, ease: "easeOut" }
+    }
+  };
+
   return (
     <div>
-      <div className="mx-auto max-w-7xl">
+       <motion.main
+        variants={pageVariants}
+        initial="hidden"
+        animate= "visible"
+      >
+      <div className="mx-auto max-w-7xl min-h-screen px-4 ">
         <div className="flex items-baseline justify-between border-b border-gray-200 pt-10 pb-5">
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900">
+          <h1 className="lg:text-4xl font-bold tracking-tight text-gray-900 ">
             {profileInfo?.role === "candidate"
               ? "Explore All Jobs"
               : "Jobs Dashboard"}
@@ -121,39 +160,45 @@ function JobListing({
             )}
           </div>
         </div>
-        <div className="pt-6 pb24">
-          <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-3">
-            <div className="lg:col-span-4">
-              <div className="container mx-auto p-0 space-y-8">
-                <div className="grid grid-cols-1 gap-x-4 gap-y-8 md:grid-cols-2 lg:grid-cols-3">
-                  {jobList && jobList.length > 0
-                    ? jobList.map((jobItem, idx) =>
-                        profileInfo?.role === "candidate" ? (
-                          <CandidateJobCard
-                            key={idx}
-                            jobItem={jobItem}
-                            profileInfo={profileInfo}
-                            jobApplication={jobApplication}
-                            currentCount={jobList.length}
-                            
-                          />
-                        ) : (
-                          <RecruiterJobCard
-                            jobItem={jobItem}
-                            key={idx}
-                            jobApplication={jobApplication}
-                            currentCount={jobList.length}
-                            profileInfo={profileInfo}
-                          />
-                        )
-                      )
-                    : null}
-                </div>
-              </div>
+        <div className="pt-6 pb-2">
+      <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-3">
+        <div className="lg:col-span-4">
+          <motion.div
+            className="container mx-auto p-0 space-y-8"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <div className="grid grid-cols-1 gap-x-4 gap-y-8 md:grid-cols-2 lg:grid-cols-3">
+              {jobList && jobList.length > 0
+                ? jobList.map((jobItem, idx) => (
+                    <motion.div key={idx} variants={itemVariants}>
+                      {profileInfo?.role === "candidate" ? (
+                        <CandidateJobCard
+                          jobItem={jobItem}
+                          profileInfo={profileInfo}
+                          jobApplication={jobApplication}
+                          currentCount={jobList.length}
+                        />
+                      ) : (
+                        <RecruiterJobCard
+                          jobItem={jobItem}
+                          jobApplication={jobApplication}
+                          currentCount={jobList.length}
+                          profileInfo={profileInfo}
+                        />
+                      )}
+                    </motion.div>
+                  ))
+                : null}
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
+    </div>
+      </div>
+      
+      </motion.main>
     </div>
   );
 }

@@ -1,17 +1,21 @@
 "use client";
 
-import { memberShipPlans } from "@/utils";
-import CommonCard from "../common-card";
-import { Button } from "../ui/button";
-import { useEffect, useRef } from "react";
-import { load } from "@cashfreepayments/cashfree-js";
 import {
   createOrderAction,
   createPaymentAction,
   paymentVerify,
 } from "@/actions";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { memberShipPlans } from "@/utils";
+import { load } from "@cashfreepayments/cashfree-js";
+import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
+import { Button } from "../ui/button";
 
 function MemberShipPage(ProfileInfo) {
+  const [hoveredPlan, setHoveredPlan] = useState(null)
+
   const cashfreeRef = useRef(null);
   useEffect(() => {
     const initializeSDK = async () => {
@@ -93,6 +97,7 @@ function MemberShipPage(ProfileInfo) {
           "/membership"
         );
       }
+      toast.success("Payment successful! Your membership has been updated.");
     } catch (error) {
       console.log("Payment verification failed", error);
     }
@@ -139,99 +144,109 @@ function MemberShipPage(ProfileInfo) {
     (plan) => ProfileInfo.ProfileInfo.memberShipType === plan.type
   );
 
-  return (
-    <div className="mx-auto max-w-7xl">
-      <div className="flex items-baseline justify-between border-b pb-6 pt-24">
-        <h1 className="text-4xl font-bold tracking-tight text-gray-900">
-          {ProfileInfo.ProfileInfo?.isPremiumUser
-            ? "You are a Premimum User"
-            : "Choose Your Best Plane"}
-        </h1>
-        <div>
-          {ProfileInfo.ProfileInfo?.isPremiumUser ? (
-            <Button>{ProfileInfo.ProfileInfo?.memberShipType}</Button>
-          ) : null}
-        </div>
-      </div>
-      <div className="py-20 pb-16 pt-3 ">
-        <div className="container mx-auto p-0 space-y-8">
-          <div className="grid grid-cols-1 gap-x-4 gap-y-8 md:grid-cols-2 lg:grid-cols-3">
-            {memberShipPlans.slice(trueIdx + 1).map((plan, idx) => (
-              <CommonCard
-                key={idx}
-                title={
-                  <div className="flex justify-between">
-                    <span>{`$ ${plan.price} /yr`}</span>
-                    <h1>{plan.heading}</h1>
-                  </div>
-                }
-                description={
-                  plan.type === "teams" ? (
-                    <div>
-                      <span className="font-bold text-lg">teams</span>
-                      <h1 className="font-bold ">
-                        you can apply for 10 jobs with a validity 6 months
-                      </h1>
-                    </div>
-                  ) : plan.type === "basic" ? (
-                    <div>
-                      <span className="font-bold text-lg">basic</span>
-                      <h1 className="font-bold ">
-                        you can apply for 5 jobs with a validity 3 months
-                      </h1>
-                    </div>
-                  ) : plan.type === "enterprise" ? (
-                    <div>
-                      <span className="font-bold text-lg">enterprise</span>
-                      <h1 className="font-bold ">
-                        you can apply for unlimited jobs with a validity 1 year
-                      </h1>
-                    </div>
-                  ) : null
-                }
-                footerContent={
-                  <Button onClick={() => handlePay(plan)}>Update Plan</Button>
-                }
-              />
-            ))}
-          </div>
-          {trueIdx !== -1 && (
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  }
 
-            <div className="h-32 flex gap-4 justify-around items-end pb-5">
-               <h1 className="text-xl font-bold">
-                {`Your Current Plan: ${ProfileInfo?.ProfileInfo?.memberShipType}`}
-              </h1>
-              { ProfileInfo?.ProfileInfo?.memberShipType=== "teams" ? (
-                    
-                      <h1 className="text-xl font-semibold ">
-                        you can apply for 10 jobs
-                      </h1>
-                    
-                  ) : ProfileInfo?.ProfileInfo?.memberShipType=== "basic" ? (
-                    
-                      <h1 className="text-xl font-semibold ">
-                        you can apply for 5 jobs
-                      </h1>
-                    
-                  ) : ProfileInfo?.ProfileInfo?.memberShipTypee === "enterprise" ? (
-                    
-                      <h1 className="text-xl font-semibold ">
-                        you can apply for unlimited jobs
-                      </h1>
-                    
-                  ) : null}
-             
-              <span className="text-xl font-semibold">
-                {`Membership Purchased On: ${ProfileInfo?.ProfileInfo?.memberShipStartDate}`}
-              </span>
-              <span className="text-xl font-semibold">
-                {`Membership Expires On: ${ProfileInfo?.ProfileInfo?.memberShipEndDate}`}
-              </span>
-            </div>
-          )}
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 10,
+      },
+    },
+  }
+
+  return (
+    <div className="h-full p-2">
+    <motion.div className="container mx-auto " initial="hidden" animate="visible" variants={containerVariants}>
+      <motion.div className="text-center mb-12" variants={itemVariants}>
+      <div className="font-bold mb-4 text-white flex justify-around  text-base  md:mt-5 lg:text-4xl mt-8">
+          {ProfileInfo.ProfileInfo?.isPremiumUser ? <span className="mt-2">Your Premium Membership</span>: <span className="mt-2">Choose Your Best Plan</span>}
+        
+        {ProfileInfo.ProfileInfo?.isPremiumUser && (
+          <Button variant="outline" size="lg" className="bg-gray-900 text-white border-0 text-xl ">
+            {ProfileInfo.ProfileInfo?.memberShipType}
+          </Button>
+        )}
         </div>
-      </div>
-    </div>
+      </motion.div>
+
+      <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" variants={containerVariants}>
+        {memberShipPlans.slice(trueIdx + 1).map((plan, idx) => (
+          <motion.div
+            key={idx}
+            variants={itemVariants}
+            whileHover={{ scale: 1.05 }}
+            onHoverStart={() => setHoveredPlan(plan.type)}
+            onHoverEnd={() => setHoveredPlan(null)}
+          >
+            <Card
+              className={` mt-10 h-full flex flex-col ${hoveredPlan === plan.type ? "shadow-xl" : "shadow"} transition-shadow duration-300`}
+            >
+              <CardHeader>
+                <CardTitle className="flex justify-between items-center">
+                  <span className="text-2xl font-bold">{plan.heading}</span>
+                  <span className="text-3xl font-extrabold text-primary">${plan.price}/yr</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex-grow">
+                <p className="text-lg font-semibold mb-2">{plan.type.charAt(0).toUpperCase() + plan.type.slice(1)}</p>
+                <p className="text-gray-600">
+                  {plan.type === "teams" && "Apply for 10 jobs with 6 months validity"}
+                  {plan.type === "basic" && "Apply for 5 jobs with 3 months validity"}
+                  {plan.type === "enterprise" && "Apply for unlimited jobs with 1 year validity"}
+                </p>
+              </CardContent>
+              <CardFooter>
+                <Button className="w-full" onClick={() => handlePay(plan)}>
+                  Update Plan
+                </Button>
+              </CardFooter>
+            </Card>
+          </motion.div>
+        ))}
+      </motion.div>
+
+      {trueIdx !== -1 && (
+        <motion.div className="mt-20 bg-white rounded-lg shadow-lg p-8" variants={itemVariants}>
+          <h2 className="text-2xl font-bold mb-6 text-center">Your Current Plan</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+            <div>
+              <p className="text-gray-600 mb-2">Plan Type</p>
+              <p className="text-xl font-semibold">{ProfileInfo?.ProfileInfo?.memberShipType}</p>
+            </div>
+            <div>
+              <p className="text-gray-600 mb-2">Job Applications</p>
+              <p className="text-xl font-semibold">
+                {ProfileInfo?.ProfileInfo?.memberShipType === "teams" && "10 jobs"}
+                {ProfileInfo?.ProfileInfo?.memberShipType === "basic" && "5 jobs"}
+                {ProfileInfo?.ProfileInfo?.memberShipType === "enterprise" && "Unlimited jobs"}
+              </p>
+            </div>
+            <div>
+              <p className="text-gray-600 mb-2">Purchased On</p>
+              <p className="text-xl font-semibold">{ProfileInfo?.ProfileInfo?.memberShipStartDate}</p>
+            </div>
+            <div>
+              <p className="text-gray-600 mb-2">Expires On</p>
+              <p className="text-xl font-semibold">{ProfileInfo?.ProfileInfo?.memberShipEndDate}</p>
+            </div>
+          </div>
+        </motion.div>
+      )}
+    </motion.div>
+  </div>
   );
 }
 

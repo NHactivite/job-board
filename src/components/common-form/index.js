@@ -13,6 +13,7 @@ export default function CommonFrom({
   handleFileChange,
   uploadFile,
   fileStatus,
+  file
 }) {
   const renderInputByCommponentType = (getCurrentControl) => {
     let content = null;
@@ -58,23 +59,25 @@ export default function CommonFrom({
                 <Button 
                 type="button" 
                 onClick={uploadFile}>
-                  {fileStatus ? "Remove" : "Upload"}
+                  {fileStatus ? "Remove" : file===null?"update": "Upload"}
                 </Button>
               </div>
             </Label>
             {formData[getCurrentControl.name] && (
               <div>
                 <span className="mx-3">
-                  {formData[getCurrentControl.name].split("/").pop().replace(/_[^/]+$/, '')}
+                  {formData[getCurrentControl.name]?.path?.split("/").pop().replace(/_[^/]+$/, '')}
                 </span>
-              <Button
+                {/* {console.log(`${formData[getCurrentControl.name]}`,"formData[getCurrentControl.name]")}
+                 */}
+            { formData[getCurrentControl.name]?.publicPath!==""? <Button
               type="button"
-              onClick={() => window.open(formData[getCurrentControl.name], "_blank")}
+              onClick={() => window.open(formData[getCurrentControl.name]?.publicPath, "_blank")}
               className="text-white mt-3 mx-3"
-              disabled={formData[getCurrentControl.name]===""}
+              disabled={formData[getCurrentControl.name]?.publicPath===""}
             >
               View Resume File
-            </Button>
+            </Button>:""}
             
               </div>
             )}

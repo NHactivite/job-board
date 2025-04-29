@@ -1,10 +1,10 @@
 "use client"
 
+import { updateProfileAction } from "@/actions";
 import { candidateOnboardFRomControl, initialCandidateFromData, initialRecruiterFromData, recruiterOnboardFRomControl } from "@/utils";
+import { createClient } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import CommonFrom from "../common-form";
-import { createClient } from "@supabase/supabase-js";
-import { updateProfileAction } from "@/actions";
 const supabaseClient = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -16,20 +16,18 @@ function AccountInfo({profileInfo}){
     const [view,setView]=useState(false)
     const [hasViewChanged, setHasViewChanged] = useState(false);
     const [file, setFile] = useState(null);
-    
     useEffect(()=>{
       window.scrollTo(0, 0);
         if(profileInfo?.role==="recruiter") setRecruiterFromData(profileInfo.recruiterInfo)
           if(profileInfo?.role==="candidate")  {
-            const { data } = supabaseClient.storage.from("job-board-public").getPublicUrl(profileInfo.candidateInfo.resume)
             setCandidateFromData({
-                ...profileInfo.candidateInfo,
-                resume:data.publicUrl
-            })
+              ...profileInfo.candidateInfo
+             })
           }
 
     },[profileInfo]);
-
+ 
+  
 useEffect(() => {
   if (hasViewChanged) {
     handleUpdateResume()
@@ -58,9 +56,13 @@ useEffect(() => {
           );
           
           if(data){ 
+            const res = supabaseClient.storage.from("job-board-public").getPublicUrl(data.path)
             setCandidateFromData((prevState) => ({
               ...prevState,
-              resume: data.path,
+              resume:{
+                path: data.path,
+                publicPath:res.data.publicUrl
+               }
             }));
             setView(true)
               }   
@@ -68,7 +70,7 @@ useEffect(() => {
     const uploadFile=async(e)=>{
         e.preventDefault();
     
-       const sanitizedFileName = (profileInfo.candidateInfo.resume).split("/").pop();
+       const sanitizedFileName = (profileInfo.candidateInfo.resume)?.path.split("/").pop();
          const { data } = await supabaseClient
          .storage
          .from('job-board-public') // Specify the bucket name
@@ -76,6 +78,7 @@ useEffect(() => {
           
           if(data[0]?.name==sanitizedFileName){
             handleUploadPdfToSuperbase(); 
+            
        }
        
      }
@@ -116,8 +119,8 @@ useEffect(() => {
     }
   
     return(
-        <div className="mx-auto max-w-7xl">
-             <div className="flex items-baseline justify-between pb-6 border-b pt-24">
+        <div className="mx-auto max-w-7xl p-2 ">
+             <div className="flex items-baseline justify-between pb-6 border-b pt-4">
                  <h1 className="text-4xl font-bold tracking-tight text-gray-950">Account details</h1>
              </div>
              <div className="py-20 pb-24  pt-6">
@@ -132,6 +135,7 @@ useEffect(() => {
                      formData={profileInfo?.role==="candidate"?candidateFormData: recruiterFormData}
                      buttonText="Update"
                      setFormData={profileInfo?.role==="candidate"?setCandidateFromData:setRecruiterFromData}
+                     file={file}
                     /> 
                 </div>
              </div>

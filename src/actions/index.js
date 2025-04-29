@@ -8,6 +8,17 @@ import { revalidatePath } from "next/cache";
 
 import { Cashfree} from "cashfree-pg";
 
+import { GoogleGenerativeAI } from "@google/generative-ai"        
+import { NextResponse } from "next/server";
+// Your Gemini API key
+const GEMINI_API_KEY = process.env.GIMINI_API_KEY;
+
+// Initialize the Gemini model
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+
 // Initialize Cashfree with your credentials
 Cashfree.XClientId = process.env.CLIENT_ID
 Cashfree.XClientSecret = process.env.CLIENT_SECRET
@@ -98,12 +109,13 @@ export  const getCandidateDetailsByIdAction=async(candidateId)=>{
 // update job-Application
 
 export async function updateJobApplication(data,pathToRevalidate){
-  await ConnectDB();
-   const {recruiterUserId,name,jobAppliedDate,email,_id,candidateUserId,status,jobId}=data;
+   await ConnectDB();
+   const {recruiterUserId,name,jobAppliedDate,email,_id,candidateUserId,status,jobId,interviewDate}=data;
+  
      await Application.findOneAndUpdate({
       _id:_id
      },{
-      recruiterUserId,name,jobAppliedDate,email,candidateUserId,status,jobId
+      recruiterUserId,name,jobAppliedDate,email,candidateUserId,status,jobId,interviewDate
      },{
       new:true
      })
@@ -185,4 +197,105 @@ export async function createOrderAction(data,pathToRevalidate){
   }
 }
 
+async function normalizeJobTitle(title) {
+  const prompt = `Convert the following into a professional, standardized job title (no extra words): "${title}"`;
+  const result = await model.generateContent(prompt);
+  return result.response.text().trim();
+}
 
+// Use Gemini to find the closest matching title from DB
+async function findClosestJobTitle(normalizedTitle, storedTitles) {
+  const prompt = `
+Given the normalized job title: "${normalizedTitle}"
+And the following list of stored job titles: ${storedTitles.map(t => `"${t}"`).join(", ")}
+
+Which one from the list best matches the normalized title? Just return the best match. If none match, say "none".
+`;
+  const result = await model.generateContent(prompt);
+  const match = result.response.text().trim().toLowerCase();
+
+  if (match === "none") return null;
+
+  return match;
+}
+// AI-based greeting detection
+async function isGreeting(text) {
+  const prompt = `Is the following message a greeting? Just answer "yes" or "no": "${text}"`;
+  const result = await model.generateContent(prompt);
+  const response = result.response.text().trim().toLowerCase();
+  return response === "yes";
+}
+
+
+export const searchJob = async (title) => {
+  await ConnectDB();
+  try {
+    if (!title) {
+      return res.status(400).json({ error: "Job title is required" });
+    }
+     // Use AI to check if input is a greeting
+     const isGreet = await isGreeting(title);
+     
+     if (isGreet) {
+       
+       return { message: `Hello! How can I assist you with your job search today?` };
+     }
+
+    // Normalize user input
+    const normalizedTitle = await normalizeJobTitle(title);
+
+    // Get all stored titles
+    const jobs = await Job.find({}, "title skills");
+    const storedTitles =  jobs.map(job => job.title.toLowerCase())
+    
+    // Let Gemini pick the closest match
+    const closestMatch =storedTitles.length === 0?false:  await findClosestJobTitle(normalizedTitle, storedTitles)
+   
+    let response = {
+      available: false,
+      skills: ""
+    };
+
+    if (closestMatch) {
+      const matchedJob = jobs.find(job => job.title.toLowerCase() === closestMatch);
+      response = {
+        available: true,
+        skills: matchedJob?.skills || ""
+      };
+    } else {
+      // Use AI to generate skills
+      const skillPrompt = `Given the job title "${normalizedTitle}", provide a concise list of 3-5 key skills required in 3-5 lines max. List skills only, no explanations.`;
+      const result = await model.generateContent(skillPrompt);
+      const generatedSkills = result.response.text().trim();
+
+      response = {
+        available: false,
+        skills: generatedSkills
+      };
+    }
+  
+    // res.json({ result: response });
+    return JSON.parse(JSON.stringify(response));
+
+  } catch (error) {
+    console.error("Error:", error);
+    // res.status(500).json({ error: "Something went wrong" });
+    return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+  }
+};
+
+
+// export const setDate=async(data)=>{
+//   await ConnectDB();
+//   try{
+//     const { _id,interviewDate}=data;
+//   await Application.findOneAndUpdate({
+//     _id:_id
+//   },{
+//     interviewDate:interviewDate
+//   },{new:true})
+//   }catch(error){
+//     console.log(error)
+//     return { success: false,error:error.message}
+//   }
+// }

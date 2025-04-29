@@ -14,9 +14,9 @@ const { Fragment, useState, useEffect } = require("react")
 const { default: CommonCard } = require("../common-card")
 
 
-export const CandidateJobCard=({currentCount,jobItem,profileInfo,jobApplication})=>{
+export const CandidateJobCard=({jobItem,profileInfo,jobApplication})=>{
  const [showDetailsDrawer,setShowDetailsDrawer]=useState(false)
- const [applied,setApplied]=useState(false);
+ const [applied,setApplied]=useState(null);
  const [count,setCount]=useState(0)
 
  useEffect(() => {
@@ -29,12 +29,13 @@ export const CandidateJobCard=({currentCount,jobItem,profileInfo,jobApplication}
   setCount(matchingCount);
 }, [jobApplication, profileInfo]); 
  
- 
  useEffect(()=>{
   jobApplication?.map((item)=>(
-     (item.candidateUserId===profileInfo?.userId && item.jobId===jobItem._id)?
-      setApplied(true)
+     (item.candidateUserId===profileInfo?.userId && item.jobId===jobItem._id)
+     ?
+       setApplied(true)
      :null
+   
   
   ))
  },[showDetailsDrawer])
@@ -96,34 +97,45 @@ export const CandidateJobCard=({currentCount,jobItem,profileInfo,jobApplication}
                          }
                        </Button>
                        <Button className=" flex h-11 items-center justify-center px-5" onClick={()=>setShowDetailsDrawer(false)}>
-                        Cancel
+                        X
                        </Button>
                      </div>
                   </div>
                </DrawerHeader>
                <DrawerDescription className="text-2xl font-medium text-gray-600">
-                 {jobItem.description}
-                 <span className="text-xl ml-4 font-normal text-gray-500">
+                 </DrawerDescription>
+                <div className="text-2xl mt-3 text-black">
+                  Job location:
+                <span className="text-xl ml-2 font-bold uppercase ">
                    {jobItem.location}
                  </span>
-               </DrawerDescription>
-               <div className="mt-3 w-[150px] flex justify-center items-center h-[40px] bg-black rounded-[4px]">
-                <h2 className="text-xl font-bold text-white">{jobItem.type}</h2>
-               </div>
+                </div>
+               
+               <div className="text-2xl mt-3 text-black">
+                  Job Type:
+                <span className="text-xl ml-2 font-bold uppercase ">
+                   {jobItem.type}
+                 </span>
+                </div>
                <h3 className="text-2xl font-medium text-black mt-3">
                 Experience: {jobItem.experience}
                </h3>
+               
                <div className="flex gap-4 mt-6">
+               <span className="text-2xl font-medium text-black">Skills:</span>
                   {
                     jobItem?.skills.split(",").map((item,idx)=>(
-                      <div key={idx} className="w-[100px] flex  justify-center items-center h-[35px] bg-black rounded-[4px]">
-                         <h2 className="text-[13px] font-medium text-white">
+                      <div key={idx} className=" p-2 flex  justify-center items-center h-[35px] bg-black rounded-[4px]">
+                         <h2 className="text-[13px] text-xl text-white">
                           {item}
                          </h2>
                       </div>
                     ))
                   }
                </div>
+              <h3 className="text-2xl mt-3 text-black">
+              Job Description: {jobItem.description} 
+              </h3> 
             </DrawerContent>
             </Drawer>
             

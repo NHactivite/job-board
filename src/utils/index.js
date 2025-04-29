@@ -118,7 +118,10 @@ import qs from "query-string"
     companyRole:"",
  }
  export const initialCandidateFromData={
-    resume:"",
+    resume:{
+        path:"",
+        publicPath:""
+    },
     name:"",
     currentCompanyName:"",
     currentSalary:"",

@@ -1,9 +1,10 @@
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { Suspense } from "react";
-import Loading from "./loading";
 import { CommonLayout } from "@/components/common-layout";
+import { SocketProvider } from "@/context/SocketContext";
 import { ClerkLoaded, ClerkLoading, ClerkProvider } from "@clerk/nextjs";
+import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
+import "./globals.css";
+import Loading from "./loading";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,13 +28,15 @@ export default function RootLayout({ children }) {
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
       <ClerkLoading>
             <div className=" flex items-center justify-center h-screen text-7xl font-bold">
-               Loading....
+              Loading...
             </div>
           </ClerkLoading>
         <ClerkLoaded>
+        <SocketProvider>
         <Suspense fallback={<Loading/>}>
               <CommonLayout children={children}/>
         </Suspense>
+        </SocketProvider>
         </ClerkLoaded>
       </body>
      </html>

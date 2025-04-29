@@ -20,7 +20,8 @@ const RecruiterJobCard = ({jobItem,jobApplication}) => {
     <div>
          <CommonCard
          title={jobItem.title}
-         description={jobItem.description}
+         skills={jobItem.skills}
+         location={jobItem.location}
          footerContent={
           <Button disabled={btnDisabled===0} onClick={()=>setShowApplicantsDrawer(true)}  className=" flex h-11 items-center justify-center px-5">
             {
