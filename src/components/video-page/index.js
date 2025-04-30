@@ -39,7 +39,13 @@ const  VideoPage = ({role}) => {
           setRemoteSocketId(from);
           
           const stream = await navigator.mediaDevices.getUserMedia({
-            audio: true,
+            // audio: true,
+            audio: {
+              echoCancellation: true,
+              noiseSuppression: true,
+              autoGainControl: true
+            },
+          
             video: true,
           });
           setMyStream(stream);

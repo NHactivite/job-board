@@ -39,7 +39,7 @@ function CandidateActivity({jobList,jobApplicants}){
                                               jobApplication.jobId === finalFilteredItem._id &&
                                               jobApplication.status.includes(status)
                                           )
-                                          
+                                       
                                     return (<CommonCard
                                          key={idx}
                                          title={finalFilteredItem.title}

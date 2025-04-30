@@ -90,7 +90,7 @@ function Header({ user, role }) {
                 </Link>
               ) : null
             )}
-            <div className="mt-4 border-t border-white/20 pt-4">
+            <div className="mt-4 border-t border-white/20 pt-4 z-50">
               <UserButton afterSignOutUrl="/" />
             </div>
           </div>

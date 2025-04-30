@@ -105,7 +105,7 @@ function CandidateList({
                   <Link
                     href={{
                       pathname: "/interview",
-                      query: { id: jobApplication[0].candidateUserId },
+                      query: { id: item.candidateUserId },
                     }}
                     className="flex h-11 items-center justify-center px-5 bg-black text-white cursor-pointer"
                   >
@@ -135,79 +135,80 @@ function CandidateList({
           setCurrentCandidateDetails(null);
           setShowCurrentCandidateDetailsModel(false);
         }}
+       
       >
-        <DialogContent>
+        <DialogContent  >
           <DialogTitle className=" flex justify-center text-xl font-bold">
             <span className="bg-black text-white px-5 py-2 rounded-md">
               Candidate
             </span>
           </DialogTitle>
-          <div>
+          <div >
             <div>
-              <h1 className="text-lg font-bold text-gray-900">
+              <h1 className="font-bold text-gray-900">
                 {currentCandidateDetails?.candidateInfo.name}
               </h1>
-              <p className="text-lg font-bold text-gray-900">
+              <p className=" font-bold text-gray-900">
                 Email:{" "}
                 <span className="font-semibold text-gray-600 ">
                   {currentCandidateDetails?.email}
                 </span>
               </p>
-              <p className="text-lg font-bold text-gray-900">
+              <p className=" font-bold text-gray-900">
                 Role:{" "}
                 <span className="font-semibold text-gray-600 ">
                   {currentCandidateDetails?.role}
                 </span>
               </p>
-              <p className="text-lg font-bold text-gray-900">
+              <p className=" font-bold text-gray-900">
                 Premium User:{" "}
                 <span className="font-semibold text-gray-600 ">
                   {currentCandidateDetails?.isPremiumUser ? "Yes" : "No"}
                 </span>
               </p>
-              <p className="text-lg font-bold text-gray-900">
+              <p className=" font-bold text-gray-900">
                 Current Company:{" "}
                 <span className="font-semibold text-gray-600 ">
                   {currentCandidateDetails?.candidateInfo.currentCompanyName}
                 </span>
               </p>
-              <p className="text-lg font-bold text-gray-900">
+              <p className=" font-bold text-gray-900">
                 Current Salary:{" "}
                 <span className="font-semibold text-gray-600 ">
                   {currentCandidateDetails?.candidateInfo.currentSalary}
                 </span>
               </p>
-              <p className="text-lg font-bold text-gray-900">
+              <p className=" font-bold text-gray-900">
                 Job Location:{" "}
                 <span className="font-semibold text-gray-600 ">
                   {currentCandidateDetails?.candidateInfo.currentJobLocation}
                 </span>
               </p>
-              <p className="text-lg font-bold text-gray-900">
+              <p className=" font-bold text-gray-900">
                 Preferred Job Location:{" "}
                 <span className="font-semibold text-gray-600 ">
                   {currentCandidateDetails?.candidateInfo.preferedJobLocation}
                 </span>
               </p>
-              <p className="text-lg font-bold text-gray-900">
+              <p className=" font-bold text-gray-900">
                 Previous Companies:{" "}
                 <span className="font-semibold text-gray-600 ">
                   {currentCandidateDetails?.candidateInfo.previousCompanies}
                 </span>
               </p>
-              <p className="text-lg font-bold text-gray-900">
+              <p className=" font-bold text-gray-900">
                 Notice Period:{" "}
                 <span className="font-semibold text-gray-600 ">
                   {currentCandidateDetails?.candidateInfo.noticePeriod}
                 </span>
               </p>
-              <p className="text-lg font-bold text-gray-900">
+              <p className=" font-bold text-gray-900">
                 Skills:{" "}
                 <span className="font-semibold text-gray-600 ">
                   {currentCandidateDetails?.candidateInfo.skills}
                 </span>
               </p>
-              <p className="text-lg font-bold text-gray-900">
+              <p className=" font-bold text-gray-900">
                 LinkedIn Profile:{" "}
                 <a
                   className="font-semibold text-gray-600 "
@@ -218,7 +219,7 @@ function CandidateList({
                   {currentCandidateDetails?.candidateInfo.linkedinProfile}
                 </a>
               </p>
-              <p className="text-lg font-bold text-gray-900">
+              <p className=" font-bold text-gray-900">
                 GitHub Profile:{" "}
                 <a
                   className="font-semibold text-gray-600 "
@@ -229,31 +230,31 @@ function CandidateList({
                   {currentCandidateDetails?.candidateInfo.githubProfile}
                 </a>
               </p>
-              <p className="text-lg font-bold text-gray-900">
+              <p className=" font-bold text-gray-900">
                 Graduated Year:{" "}
                 <span className="font-semibold text-gray-600 ">
                   {currentCandidateDetails?.candidateInfo.graduatedYear}
                 </span>
               </p>
-              <p className="text-lg font-bold text-gray-900">
+              <p className=" font-bold text-gray-900">
                 College Location:{" "}
                 <span className="font-semibold text-gray-600 ">
                   {currentCandidateDetails?.candidateInfo.collegeLocation}
                 </span>
               </p>
-              <p className="text-lg font-bold text-gray-900">
+              <p className=" font-bold text-gray-900">
                 College:{" "}
                 <span className="font-semibold text-gray-600 ">
                   {currentCandidateDetails?.candidateInfo.college}
                 </span>
               </p>
-              <p className="text-lg font-bold text-gray-900">
+              <p className=" font-bold text-gray-900">
                 Total Experience:{" "}
                 <span className="font-semibold text-gray-600 ">
                   {currentCandidateDetails?.candidateInfo.totalExperience}
                 </span>
               </p>
-              <p className="text-lg font-bold text-gray-900">
+              <p className=" font-bold text-gray-900">
                 Resume:{" "}
                 <a
                   className="font-semibold text-gray-600 "
@@ -269,7 +270,7 @@ function CandidateList({
           <div>
             <Button
               onClick={handlePreviewResume}
-              className="m-2 items-center justify-center px-5"
+              className=" items-center justify-center px-5"
             >
               Resume
             </Button>

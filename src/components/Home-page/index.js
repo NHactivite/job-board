@@ -164,7 +164,7 @@ const HomePage = ({ ProfileInfo }) => {
             }}
           />
           <div className="relative z-10 container mx-auto px-4 py-10 flex ">
-            <div className="flex flex-wrap items-center gap-12">
+            <div className="flex flex-wrap items-center gap-12 ">
               <motion.div
                 className=" w-5/6 lg:w-5/12 space-y-8"
                 variants={containerVariants}
@@ -192,8 +192,7 @@ const HomePage = ({ ProfileInfo }) => {
                   Connect with top companies and unlock your career potential
                   with ease
                 </motion.p>
-
-                <motion.div variants={itemVariants} className="flex gap-4">
+                <motion.div variants={itemVariants} className="flex gap-4  ">
                   {ProfileInfo ? (
                     ProfileInfo?.role === "candidate" ? (
                       <Link
@@ -211,7 +210,7 @@ const HomePage = ({ ProfileInfo }) => {
                       </Link>
                     )
                   ) : (
-                    <>
+                    <div className="hidden lg:flex gap-4">
                       <Link
                         href={"/jobs"}
                         className="flex bg-black text-white rounded-md h-11 items-center justify-center px-5"
@@ -224,9 +223,10 @@ const HomePage = ({ ProfileInfo }) => {
                       >
                         Browse Jobs
                       </Link>
-                    </>
+                    </div>
                   )}
-                </motion.div>
+        </motion.div>
+               
               </motion.div>
 
               <motion.div
@@ -244,6 +244,7 @@ const HomePage = ({ ProfileInfo }) => {
                 />
               </motion.div>
             </div>
+            
             <div className="border-black h-full w-96 ">
               <div className="flex gap-2">
                 <Input
@@ -296,7 +297,24 @@ const HomePage = ({ ProfileInfo }) => {
             </div>
           </div>
         </section>
-
+        <motion.div variants={itemVariants} className="flex gap-4 justify-around my-4">
+                  {ProfileInfo ? null: (
+                    <div className="flex gap-4 lg:hidden ">
+                      <Link
+                        href={"/jobs"}
+                        className="flex bg-black text-white rounded-md h-11 items-center justify-center px-5"
+                      >
+                        Post New Job
+                      </Link>
+                      <Link
+                        href={"/jobs"}
+                        className="flex bg-black text-white rounded-md h-11 items-center justify-center px-5"
+                      >
+                        Browse Jobs
+                      </Link>
+                    </div>
+                  )}
+        </motion.div>
         {/* Popular Jobs Section */}
         <section className="py-16 bg-gradient-to-br from-purple-600 via-blue-300 to-indigo-60 rounded-xl my-8  relative overflow-hidden ">
           <div className="container mx-auto px-4">
