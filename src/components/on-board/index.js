@@ -155,8 +155,8 @@ function OnBoard() {
     <div className="bg-white p-5 min-h-screen">
       <Tabs value={currentTab} onValueChange={handleTabChange}>
         <div className="w-full">
-          <div className="flex items-baseline justify-between border-b ">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900">
+          <div className=" pb-2 lg:flex items-baseline justify-between border-b ">
+            <h1 className="text-3xl my-2 lg:text-4xl font-bold tracking-tight text-gray-900">
               Welcome to onboarding
             </h1>
             <TabsList>

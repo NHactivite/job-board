@@ -12,6 +12,10 @@ const RecruiterJobCard = ({jobItem,jobApplication}) => {
   const [currentCandidateDetails,setCurrentCandidateDetails]=useState(null);
 
   const [showCurrentCandidateDetailsModel,setShowCurrentCandidateDetailsModel]=useState(false)
+  console.log("jobItem",jobItem);
+  console.log("jobApplication",jobApplication);
+  console.log("jobApplicationolny",jobApplication.filter(item=>item.jobId===jobItem._id));
+  
   
   let btnDisabled=jobApplication.filter(item=>item.jobId===jobItem._id).length
   

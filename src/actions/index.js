@@ -10,6 +10,7 @@ import { Cashfree} from "cashfree-pg";
 
 import { GoogleGenerativeAI } from "@google/generative-ai"        
 import { NextResponse } from "next/server";
+import Plan from "@/models/plans";
 // Your Gemini API key
 const GEMINI_API_KEY = process.env.GIMINI_API_KEY;
 
@@ -37,6 +38,48 @@ export const fetchProfileAction=async(id)=>{
     await ConnectDB();
     const result=Profile.findOne({userId:id}).lean()
     return result
+}
+export const fetchAllProfileAction=async()=>{
+    await ConnectDB();
+    const result=Profile.find({}).lean()
+    return result
+}
+
+export async function getMembershipUsers() {
+  await ConnectDB();
+  const usersWithMembership = await Profile.find(
+    { memberShipType: { $exists: true, $ne: null } },
+    { memberShipType: 1, _id: 0 }
+  ).lean();
+
+  return usersWithMembership;
+}
+
+export const fetchPlanAction=async()=>{
+    await ConnectDB();
+    const result=await Plan.find({}).lean()
+    return result
+}
+export const fetchPlanUpadateAction=async(data,pathToRevalidate)=>{
+
+    await ConnectDB();
+    const result=await Plan.findByIdAndUpdate({
+        _id:data.id
+    },{
+        $set:{
+            heading:data.heading,
+            price:data.price,
+            type:data.type
+        }
+    },{new:true}).lean()
+    revalidatePath(pathToRevalidate)
+    
+}
+
+export const createPlanAction=async(data,pathToRevalidate)=>{
+  await ConnectDB();
+await Plan.create(data)
+  revalidatePath(pathToRevalidate)
 }
 
 // create job action
@@ -79,6 +122,11 @@ export async function createJobApplicationAction(data,pathToRevalidate){
     await ConnectDB();
     await Application.create(data);
     revalidatePath(pathToRevalidate)
+} 
+export async function fetchJobApplicationAction(){
+    await ConnectDB();
+    const result=await Application.find({})
+    return JSON.parse(JSON.stringify(result))
 } 
 
 // fetch job application for candidate

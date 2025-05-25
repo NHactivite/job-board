@@ -1,5 +1,7 @@
 import { fetchProfileAction } from '@/actions';
+import { checkRole } from '@/auth/checkRole';
 import HomePage from '@/components/Home-page';
+
 import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 
@@ -10,6 +12,7 @@ export default async function Home() {
   if(user && !ProfileInfo?._id) redirect("/onboard")
 
 
+  
   return (
      <>
      <HomePage ProfileInfo={JSON.parse(JSON.stringify(ProfileInfo))}/>

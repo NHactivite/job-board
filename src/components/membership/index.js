@@ -6,17 +6,16 @@ import {
   paymentVerify,
 } from "@/actions";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { memberShipPlans } from "@/utils";
 import { load } from "@cashfreepayments/cashfree-js";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { Button } from "../ui/button";
 
-function MemberShipPage(ProfileInfo) {
+function MemberShipPage({ProfileInfo, AllPlan}) {
   const [hoveredPlan, setHoveredPlan] = useState(null)
-
   const cashfreeRef = useRef(null);
+  
   useEffect(() => {
     const initializeSDK = async () => {
       try {
@@ -27,7 +26,6 @@ function MemberShipPage(ProfileInfo) {
         console.error("Failed to load payment gateway:", error);
       }
     };
-
     initializeSDK();
   }, []);
 
@@ -35,8 +33,8 @@ function MemberShipPage(ProfileInfo) {
     try {
       const res = await createPaymentAction({
         amount: plan.price,
-        customer_id: ProfileInfo.ProfileInfo.userId,
-        customer_email: ProfileInfo.ProfileInfo.email,
+        customer_id: ProfileInfo.userId,
+        customer_email: ProfileInfo.email,
       });
       // Check if the response has the necessary data
       if (res && res.payment_session_id) {
@@ -88,7 +86,7 @@ function MemberShipPage(ProfileInfo) {
       if (data && data[0].payment_status === "SUCCESS") {
         const response = await createOrderAction(
           {
-            ...ProfileInfo.ProfileInfo,
+            ...ProfileInfo,
             isPremiumUser: true,
             memberShipType: plan.type,
             memberShipStartDate,
@@ -140,8 +138,8 @@ function MemberShipPage(ProfileInfo) {
     }
   };
 
-  const trueIdx = memberShipPlans.findIndex(
-    (plan) => ProfileInfo.ProfileInfo.memberShipType === plan.type
+  const trueIdx = AllPlan.findIndex(
+    (plan) => ProfileInfo.memberShipType === plan.type
   );
 
   const containerVariants = {
@@ -172,18 +170,18 @@ function MemberShipPage(ProfileInfo) {
     <motion.div className="container mx-auto " initial="hidden" animate="visible" variants={containerVariants}>
       <motion.div className="text-center mb-12" variants={itemVariants}>
       <div className="font-bold mb-4 text-white flex justify-around  text-base  md:mt-5 lg:text-4xl mt-8">
-          {ProfileInfo.ProfileInfo?.isPremiumUser ? <span className="mt-2">Your Premium Membership</span>: <span className="mt-2">Choose Your Best Plan</span>}
+          {ProfileInfo?.isPremiumUser ? <span className="mt-2">Your Premium Membership</span>: <span className="mt-2">Choose Your Best Plan</span>}
         
-        {ProfileInfo.ProfileInfo?.isPremiumUser && (
+        {ProfileInfo?.isPremiumUser && (
           <Button variant="outline" size="lg" className="bg-gray-900 text-white border-0 text-xl ">
-            {ProfileInfo.ProfileInfo?.memberShipType}
+            {ProfileInfo?.memberShipType}
           </Button>
         )}
         </div>
       </motion.div>
 
       <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" variants={containerVariants}>
-        {memberShipPlans.slice(trueIdx + 1).map((plan, idx) => (
+        {AllPlan.slice(trueIdx + 1).map((plan, idx) => (
           <motion.div
             key={idx}
             variants={itemVariants}
@@ -197,7 +195,7 @@ function MemberShipPage(ProfileInfo) {
               <CardHeader>
                 <CardTitle className="flex justify-between items-center">
                   <span className="text-2xl font-bold">{plan.heading}</span>
-                  <span className="text-3xl font-extrabold text-primary">${plan.price}/yr</span>
+                  <span className="text-3xl font-extrabold text-primary">₹{plan.price}/yr</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex-grow">
@@ -224,23 +222,23 @@ function MemberShipPage(ProfileInfo) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
             <div>
               <p className="text-gray-600 mb-2">Plan Type</p>
-              <p className="text-xl font-semibold">{ProfileInfo?.ProfileInfo?.memberShipType}</p>
+              <p className="text-xl font-semibold">{ProfileInfo?.memberShipType}</p>
             </div>
             <div>
               <p className="text-gray-600 mb-2">Job Applications</p>
               <p className="text-xl font-semibold">
-                {ProfileInfo?.ProfileInfo?.memberShipType === "teams" && "10 jobs"}
-                {ProfileInfo?.ProfileInfo?.memberShipType === "basic" && "5 jobs"}
-                {ProfileInfo?.ProfileInfo?.memberShipType === "enterprise" && "Unlimited jobs"}
+                {ProfileInfo?.memberShipType === "teams" && "10 jobs"}
+                {ProfileInfo?.memberShipType === "basic" && "5 jobs"}
+                {ProfileInfo?.memberShipType === "enterprise" && "Unlimited jobs"}
               </p>
             </div>
             <div>
               <p className="text-gray-600 mb-2">Purchased On</p>
-              <p className="text-xl font-semibold">{ProfileInfo?.ProfileInfo?.memberShipStartDate}</p>
+              <p className="text-xl font-semibold">{ProfileInfo?.memberShipStartDate}</p>
             </div>
             <div>
               <p className="text-gray-600 mb-2">Expires On</p>
-              <p className="text-xl font-semibold">{ProfileInfo?.ProfileInfo?.memberShipEndDate}</p>
+              <p className="text-xl font-semibold">{ProfileInfo?.memberShipEndDate}</p>
             </div>
           </div>
         </motion.div>

@@ -15,9 +15,11 @@ const value=await searchParams
         redirect("/onboard");
         return null;
     }
-   
+    
+    
     const jobList= profileInfo?.role==="candidate"?await fetchJobsForCandidateAction(value):await  fetchJobsForRecruiterAction(user?.id);
-
+   console.log("jobList",jobList.length);
+   
      const getJobApplicationList= profileInfo?.role==="candidate"? await fetchJobApplicationForCandidate(user?.id)
      : await fetchJobApplicationForRecruiter(user?.id)
 

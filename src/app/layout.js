@@ -1,6 +1,6 @@
 import { CommonLayout } from "@/components/common-layout";
 import { SocketProvider } from "@/context/SocketContext";
-import { ClerkLoaded, ClerkLoading, ClerkProvider } from "@clerk/nextjs";
+import { ClerkLoaded, ClerkLoading, ClerkProvider} from "@clerk/nextjs";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";

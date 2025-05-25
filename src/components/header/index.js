@@ -1,15 +1,15 @@
 "use client";
 
-import { useSocket } from "@/context/SocketContext";
-import { UserButton } from "@clerk/nextjs";
+import { UserButton ,SignOutButton} from "@clerk/nextjs";
 import { AlignJustify } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet";
 
-function Header({ user, role }) {
+function Header({ user, role, isAdmin }) {
     const [open, setOpen] = useState(false);
+  
   const menuItems = [
     {
       label: "Home",
@@ -47,6 +47,7 @@ function Header({ user, role }) {
       path: "/account",
       show: user,
     },
+   
   ];
   
 
@@ -59,7 +60,7 @@ function Header({ user, role }) {
             variant="ghost"
             className="lg:hidden flex items-center gap-2 p-2 rounded-md bg-white/10 backdrop-blur-md border border-white/20 shadow-md hover:bg-white/20 transition"
           >
-            <AlignJustify className="h-6 w-6 text-white" />
+            <AlignJustify className="h-6 w-6  text-white" />
             <span className="sr-only">Toggle Navigation Menu</span>
           </Button>
         </SheetTrigger>
@@ -90,8 +91,9 @@ function Header({ user, role }) {
                 </Link>
               ) : null
             )}
-            <div className="mt-4 border-t border-white/20 pt-4 z-50">
-              <UserButton afterSignOutUrl="/" />
+            <div className="mt-4 border-t border-white/20 pt-4 z-50 flex justify-around">
+            {isAdmin && <Link href="/admin" className="group inline-flex h-9 w-max items-center bg-white text-black  rounded-md  px-4 py-2 text-sm font-medium active:bg-black active:text-white">Admin</Link>}
+            {user && <SignOutButton className="group inline-flex h-9 w-max items-center rounded-md bg-white text-black px-4 py-2 text-sm font-medium active:bg-black active:text-white">Logout</SignOutButton>}
             </div>
           </div>
         </SheetContent>
@@ -118,7 +120,8 @@ function Header({ user, role }) {
             </Link>
           ) : null
         )}
-        <UserButton afterSignOutUrl="/" />
+        {isAdmin && <Link href="/admin" className="group inline-flex h-9 w-max items-center rounded-md bg-white px-4 py-2 text-sm font-medium active:bg-black active:text-white">Admin</Link>}
+        {user && <SignOutButton className="group inline-flex h-9 w-max items-center rounded-md bg-white px-4 py-2 text-sm font-medium active:bg-black active:text-white">Logout</SignOutButton>}
       </nav>
     </header>
   );
