@@ -13,6 +13,18 @@ import toast from "react-hot-toast";
 import { Button } from "../ui/button";
 
 function MemberShipPage({ProfileInfo, AllPlan}) {
+  
+  const matchedPlan = AllPlan.find(
+    (plan) => plan.type === ProfileInfo.memberShipType
+  );
+
+  if (matchedPlan) {
+    const { type, month, job } = matchedPlan;
+ } else {
+    console.log("No matching plan found");
+  }
+
+  
   const [hoveredPlan, setHoveredPlan] = useState(null)
   const cashfreeRef = useRef(null);
   
@@ -79,7 +91,7 @@ function MemberShipPage({ProfileInfo, AllPlan}) {
     try {
       const memberShipStartDate = getCurrentDate(); // Current date in YYYY-MM-DD format
       const memberShipEndDate = getEndDate(
-        plan.type === "basic" ? 2 : plan.type === "teams" ? 6 : 12
+       Number(plan.month)
       ); // 6 months from the current date
       let data = await paymentVerify(orderId);
 
@@ -201,9 +213,11 @@ function MemberShipPage({ProfileInfo, AllPlan}) {
               <CardContent className="flex-grow">
                 <p className="text-lg font-semibold mb-2">{plan.type.charAt(0).toUpperCase() + plan.type.slice(1)}</p>
                 <p className="text-gray-600">
-                  {plan.type === "teams" && "Apply for 10 jobs with 6 months validity"}
-                  {plan.type === "basic" && "Apply for 5 jobs with 3 months validity"}
-                  {plan.type === "enterprise" && "Apply for unlimited jobs with 1 year validity"}
+                  
+                  {
+                    (plan.month && plan.job ==="0")?"Apply for unlimited jobs with 1 year validity":`Apply for ${plan.job} jobs with ${plan.month} months validity`
+                    
+                  }
                 </p>
               </CardContent>
               <CardFooter>
@@ -224,14 +238,21 @@ function MemberShipPage({ProfileInfo, AllPlan}) {
               <p className="text-gray-600 mb-2">Plan Type</p>
               <p className="text-xl font-semibold">{ProfileInfo?.memberShipType}</p>
             </div>
-            <div>
-              <p className="text-gray-600 mb-2">Job Applications</p>
+            {/* <div>
               <p className="text-xl font-semibold">
                 {ProfileInfo?.memberShipType === "teams" && "10 jobs"}
                 {ProfileInfo?.memberShipType === "basic" && "5 jobs"}
                 {ProfileInfo?.memberShipType === "enterprise" && "Unlimited jobs"}
               </p>
-            </div>
+            </div> */}
+             <div>
+                <p className="text-gray-600 mb-2">Jobs Available</p>
+                <p className="text-xl font-semibold">
+                  {matchedPlan.job === "0"
+                    ? "Unlimited jobs"
+                    : `${matchedPlan.job} jobs`}
+                </p>
+              </div>
             <div>
               <p className="text-gray-600 mb-2">Purchased On</p>
               <p className="text-xl font-semibold">{ProfileInfo?.memberShipStartDate}</p>

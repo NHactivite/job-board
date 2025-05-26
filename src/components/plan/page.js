@@ -16,6 +16,8 @@ const Plan = ({ data }) => {
     heading: "",
     price:0,
     type: "",
+    month:"",        
+    job: "",
   };
   const [newPlanData, setNewPlanData] = useState(newPlan);
   useEffect(() => {
@@ -24,6 +26,8 @@ const Plan = ({ data }) => {
       heading: item.heading || "",
       price: item.price || 0,
       type: item.type || "",
+      month: item.month || "",
+      job: item.job || "",
     }));
     setPlanDataList(initialData);
   }, [data]);
@@ -36,6 +40,8 @@ const Plan = ({ data }) => {
       heading: current.heading,
       price: current.price,
       type: current.type,
+      month: current.month,
+      job: current.job,
     };
   
     const originalClean = {
@@ -43,6 +49,8 @@ const Plan = ({ data }) => {
       heading: original.heading,
       price: original.price,
       type: original.type,
+      month: original.month ,
+      job: original.job ,
     };
     
     const result = JSON.stringify(currentClean) === JSON.stringify(originalClean);
@@ -57,6 +65,8 @@ const Plan = ({ data }) => {
   const handleSubmit = async (e, idx) => {
     e.preventDefault();
     const plan = planDataList[idx];
+    console.log("Submitting plan:", plan);
+    
     await fetchPlanUpadateAction(plan, "/admin/plan");
     toast.success("Plan updated successfully!");
   };
@@ -113,6 +123,20 @@ const Plan = ({ data }) => {
                 onChange={(e) => handleChange(idx, "type", e.target.value)}
                 className="w-full mb-4"
               />
+              <Input
+                type="text"
+                placeholder="Month"
+                value={plan.month}
+                onChange={(e) => handleChange(idx, "month", e.target.value)}
+                className="w-full mb-4"
+              />
+              <Input
+                type="text"
+                placeholder="Number of Jobs"
+                value={plan.job}
+                onChange={(e) => handleChange(idx, "job", e.target.value)}
+                className="w-full mb-4"
+              />
               <Button className="w-full" variant="outline" type="submit" disabled={isPlanChanged(idx)} >
                 Update Plan
               </Button>
@@ -157,6 +181,24 @@ const Plan = ({ data }) => {
                 value={newPlanData.type}
                 onChange={(e) =>
                   setNewPlanData({ ...newPlanData, type: e.target.value })
+                }
+                className="w-full mb-4"
+              />
+              <Input
+                type="text"
+                placeholder="Month"
+                value={newPlanData.month}
+                onChange={(e) =>
+                  setNewPlanData({ ...newPlanData, month: e.target.value })
+                }
+                className="w-full mb-4"
+              />
+              <Input
+                type="text"
+                placeholder="job"
+                value={newPlanData.job}
+                onChange={(e) =>
+                  setNewPlanData({ ...newPlanData, job: e.target.value })
                 }
                 className="w-full mb-4"
               />

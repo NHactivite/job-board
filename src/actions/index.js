@@ -63,13 +63,15 @@ export const fetchPlanAction=async()=>{
 export const fetchPlanUpadateAction=async(data,pathToRevalidate)=>{
 
     await ConnectDB();
-    const result=await Plan.findByIdAndUpdate({
-        _id:data.id
-    },{
+    const result=await Plan.findByIdAndUpdate(
+        data.id
+    ,{
         $set:{
             heading:data.heading,
             price:data.price,
-            type:data.type
+            type:data.type,
+            month:data.month,
+            job:data.job,
         }
     },{new:true}).lean()
     revalidatePath(pathToRevalidate)
@@ -77,6 +79,8 @@ export const fetchPlanUpadateAction=async(data,pathToRevalidate)=>{
 }
 
 export const createPlanAction=async(data,pathToRevalidate)=>{
+
+  
   await ConnectDB();
 await Plan.create(data)
   revalidatePath(pathToRevalidate)
