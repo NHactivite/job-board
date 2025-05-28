@@ -19,7 +19,9 @@ const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-
+if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET) {
+  throw new Error("Cashfree credentials are missing in environment variables");
+}
 // Initialize Cashfree with your credentials
 Cashfree.XClientId = process.env.CLIENT_ID
 Cashfree.XClientSecret = process.env.CLIENT_SECRET
